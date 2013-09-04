@@ -23,11 +23,13 @@ component accessors=true extends='mura.cfobject' output=false {
 	* --------------------------------------------------------------------- */
 
 	// This method will be called by dspConfiguredGist()
+
 	public any function dspGist(string gistID='', string gistFilename='') {
 		var $ = StructKeyExists(arguments, '$') ? arguments.$ : get$();
-		var gistService = $.gistService;
-		gist = gistService.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
-		return Len(gist) ? '<div class="gist-wrapper">' & gist & '</div>' : '';
+		//var gistService = $.gistService;
+		//gist = gistService.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
+		//return Len(gist) ? '<div class="gist-wrapper">' & gist & '</div>' : '';
+		return '';
 	}
 
 	public any function dspConfiguredGist(required struct $) {
@@ -37,13 +39,24 @@ component accessors=true extends='mura.cfobject' output=false {
 		local.params = arguments.$.event('objectParams');
 
 		local.defaultParams = { 
-			gistID = '' 
-			, gistFilename = ''
+			gistID = ''
+			, gistDescription = ''
+			, gistPublic = true
+			, gistFiles = {}
 		};
 
 		StructAppend(local.params, local.defaultParams, false);
 
 		return dspGist(argumentCollection=local.params);
 	}
+
+	// public any function getGistBean(
+	// 	string id=''
+	// 	, string description=''
+	// 	, boolean public=true
+	// 	, struct files={}
+	// ) {
+	// 	return new lib.gist.gistBean(argumentCollection=arguments);
+	// }
 
 }

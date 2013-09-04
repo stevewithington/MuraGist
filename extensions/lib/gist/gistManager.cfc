@@ -1,6 +1,6 @@
 /**
 *
-* @file  gist.cfc
+* @file  gistManager.cfc
 * @author  Stephen J. Withington, Jr.
 * @description Gist API Wrapper (http://developer.github.com/v3/gists/)
 * @ratelimits Github limits authenticated requests to 5000 per hour. So, where possible, baked-in cfml caching is used. (https://learn.adobe.com/wiki/display/coldfusionen/Cache+functions)
@@ -23,47 +23,36 @@ component output="false" accessors="true" {
 	//	HELPERS
 
 	public boolean function isConnected() {
+		return true;
 		var response = ping(getAPIURL());
 		return IsDefined('response.Responseheader.Status');
 	}
 
-	public any function save(required string content, string filename='', boolean public=true, string description='', string id='') {
-		var isGood = false;
+	public any function save(required struct gistBean) {
+		var gistExists = false;
 		var result = {
 			saved = false
 			, initialResponse = {}
 			, response = {}
 			, id = ''
+			, gistBean = SerializeJSON(arguments.gistBean)
 		};
 
 		if ( isConnected() ) {
 
-			if ( Len(arguments.id) ) {
-				result.initialResponse = getByID(id=arguments.id, cached=false);
-				isGood = isValidResponse(result.initialResponse);
+			if ( Len(arguments.gistBean.getID()) ) {
+				result.initialResponse = getByID(id=arguments.gistBean.getID(), cached=false);
+				gistExists = isValidResponse(result.initialResponse);
 			}
 
-			switch(isGood) {
-				case true :
-					result.response = edit(
-						id = arguments.id
-						, content = arguments.content
-						, filename = arguments.filename
-						, description = arguments.description
-					);
-					break;
-				default :
-					result.response = create(
-						content = arguments.content
-						, filename = arguments.filename
-						, public = arguments.public
-						, description = arguments.description
-					);
-			}
+			result.response = gistExists ? edit(arguments.gistBean) : create(arguments.gistBean);
 
-			result.id = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
-				? deserializeJSON(result.response.Filecontent).id
-				: '';
+			result.parsedJSON = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
+				? DeserializeJSON(result.response.Filecontent)
+				: {};
+
+			result.id = StructKeyExists(result.parsedJSON, 'id') ? result.parsedJSON.id : '';
+			result.saved = Len(result.id) ? true : false;
 		}
 
 		return result;
@@ -168,17 +157,8 @@ component output="false" accessors="true" {
 		return r;
 	}
 
-	public any function create(required string content, string filename='', boolean public=true, string description='') {
-		var input = SerializeJSON({
-			'public' = '#arguments.public#'
-			, 'description' = '#arguments.description#'
-			, 'files' = {
-				'#arguments.filename#' = { 
-					'content' = '#arguments.content#' 
-				}
-			}
-		});
-
+	public any function create(required struct gistBean) {
+		var input = SerializeJSON(arguments.gistBean);
 		var url = getAPIURL() & '/gists';
 		var params = {
 			input = { type='body', value=input }
@@ -186,21 +166,13 @@ component output="false" accessors="true" {
 		return ping(url=url, method='POST', params=params);
 	}
 
-	public any function edit(required string id, required string content, string filename='', string description='') {
-		var input = SerializeJSON({
-			'description' = '#arguments.description#'
-			, 'files' = {
-				'#arguments.filename#' = { 
-					'content' = '#arguments.content#' 
-				}
-			}
-		});
-
-		var url = getAPIURL() & '/gists/' & arguments.id;
+	public any function edit(required struct gistBean) {
+		var input = SerializeJSON(arguments.gistBean);
+		var url = getAPIURL() & '/gists/' & arguments.gistBean.getID();
 		var params = {
 			input = { type='body', value=input }
 		};
-		CacheRemove(arguments.id);
+		CacheRemove(arguments.gistBean.getID());
 		// method='PATCH' throws an error, so using 'POST' instead
 		return ping(url=url, method='POST', params=params);
 	}

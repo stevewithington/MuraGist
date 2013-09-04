@@ -12,7 +12,7 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 	property name='$' hint='mura scope';
 	property name='username';
 	property name='password';
-	property name='gistService';
+	property name='muraGistManager';
 
 	include '../plugin/settings.cfm';
 
@@ -23,9 +23,14 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 
 	public any function onSiteRequestStart($) {
 		var contentRenderer = new contentRenderer(arguments.$);
-		var gistService = getGistService(arguments.$);
+		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
+		var password = Len(arguments.$.siteConfig('gistPassword')) ? arguments.$.siteConfig('gistPassword') : pluginConfig.getSetting('gistPassword');
+		var muraGistManager = new lib.gist.gistManager(username=username, password=password);
+
 		arguments.$.setCustomMuraScopeKey(variables.settings.package, contentRenderer);
-		arguments.$.setCustomMuraScopeKey('gistService', gistService);
+		arguments.$.setCustomMuraScopeKey('muraGistManager', muraGistManager);
+
+		setMuraGistManager(muraGistManager);
 		set$(arguments.$);
 	}
 
@@ -40,9 +45,9 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 		var gistScript = '';
 		var gistFilename = '';
 		var defaultGistFilename = Len(arguments.$.siteConfig('gistFilename')) ? arguments.$.siteConfig('gistFilename') : pluginConfig.getSetting('gistFilename');
-		var gistService = getGistService(arguments.$);
+		var muraGistManager = getMuraGistManager();
 
-		if ( gistService.isConnected() ) {
+		if ( muraGistManager.isConnected() ) {
 			for ( gist in gists ) {
 				originalGist = gist;
 				gist = ReplaceNoCase(gist,'&nbsp;',' ','ALL'); // XML does not support the &nbsp entity
@@ -66,7 +71,7 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 						? attrs['data-gistfilename'] 
 						: defaultGistFilename;
 
-					gistScript = gistService.getGistScript(id=gistid);
+					gistScript = muraGistManager.getGistScript(id=gistID, file=gistFilename);
 
 					if ( Len(gistScript) ) {
 						body = ReplaceNoCase(body, originalGist, gistScript);
@@ -75,11 +80,13 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 			}
 			arguments.$.event('__MuraResponse__', body);
 		}
-
 		set$(arguments.$);
 	}
 
 	public any function onBeforeContentSave($) {
+		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
+		var password = Len(arguments.$.siteConfig('gistPassword')) ? arguments.$.siteConfig('gistPassword') : pluginConfig.getSetting('gistPassword');
+		var muraGistManager = new lib.gist.gistManager(username=username, password=password);
 		var errors = {};
 		var error = '';
 		var debug = arguments.$.globalConfig('debuggingenabled') == true ? true : false;
@@ -92,22 +99,23 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 		var newGist = '';
 		var xml = '';
 		var attrs = '';
-		var gistID = '';
-		var gistScript = '';
-		var gistFilename = '';
 		var defaultGistFilename = Len(arguments.$.siteConfig('gistFilename')) ? arguments.$.siteConfig('gistFilename') : pluginConfig.getSetting('gistFilename');
-		var gistService = getGistService(arguments.$);
-		var gistPublic = 1;
 		var defaultGistPublic = 1;
-		var gistDescription = '';
-		var gistIdExists = 0;
+		var result = { id = '' };
+		var gistBean = '';
+		var gistBeanArgs = {};
+		var gistID = '';
+		var gistFilenames = [];
+		var gistFilename = '';
 		var gistContent = '';
-		var initialResponse = '';
-		var result = {};
+		var idx = 0;
 
-		if ( !gistService.isConnected() ) {
+		if ( !muraGistManager.isConnected() ) {
 			StructAppend(errors, {'e#StructCount(errors)+1#': 'Connection Failure. Either github.com is down or you have no connection to the Internet. In other words, it is not possible to save your Gist at this time.'});
 		} else {
+
+			gistBeans = {};
+
 			for ( gist in gists ) {
 				originalGist = gist;
 				gist = ReplaceNoCase(gist,'&nbsp;',' ','ALL'); // XML does not support the &nbsp entity
@@ -118,23 +126,36 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 					break; // bad gist
 				}
 
-				gistContent = Trim(xml.pre.XmlText);
 				attrs = xml.pre.XmlAttributes;
 
 				if ( StructKeyExists(attrs, 'class') && ListFindNoCase(attrs.class, 'gist', ' ') ) {
-					gistID = StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : '';
-					gistIdExists = Len(gistID);
+					idx++;
+
+					// Filenames must be unique for each file under a Gist
 					gistFilename = StructKeyExists(attrs, 'data-gistfilename') && Len(attrs['data-gistfilename']) ? attrs['data-gistfilename'] : defaultGistFilename;
-					gistPublic = StructKeyExists(attrs, 'data-gistpublic') ? attrs['data-gistpublic'] : defaultGistPublic;
-					gistDescription = StructKeyExists(attrs, 'data-gistdescription') ? attrs['data-gistdescription'] : '';
-					
+					if ( ArrayFind(gistFilenames, gistFilename) ) {
+						gistFilename = ListFirst(gistFilename, '.', false) & idx & '.' & ListLast(gistFilename, '.', false);
+					}
+					ArrayAppend(gistFilenames, gistFilename);
+
+					gistContent = Len(Trim(xml.pre.XmlText)) ? Trim(xml.pre.XmlText) : '';
+
+					gistBeanArgs = {
+						'id': StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID
+						, 'public' = StructKeyExists(attrs, 'data-gistpublic') ? attrs['data-gistpublic'] : defaultGistPublic
+						, 'description' = StructKeyExists(attrs, 'data-gistdescription') ? attrs['data-gistdescription'] : ''
+						, 'files' = {
+							'#gistFilename#' = {
+								'content' = gistContent
+							}
+						}
+						, 'gistManager' = muraGistManager
+					};
+
+					gistBean = new lib.gist.gistBean(argumentCollection=gistBeanArgs);
+
 					try {
-						result = gistService.save(
-							id = gistID
-							, content = gistContent
-							, filename = gistFilename
-							, description = gistDescription
-						);
+						result = gistBean.save();
 					} catch(any e) {
 						StructAppend(errors, {
 							'e#StructCount(errors)+1#': 'An error occured while attempting to save a Gist.'
@@ -143,12 +164,18 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 						});
 					}
 
-					if ( StructKeyExists(result, 'id') && Len(result.id) ) {
-						newGist = '<pre class="#attrs.class#" data-gistid="#result.id#" data-gistfilename="#gistFilename#" data-gistdescription="#gistDescription#">#Trim(HTMLEditFormat(gistContent))#</pre>';
+					if ( Len(result.id) ) {
+						newGist = '<pre class="#attrs.class#" data-gistid="#result.id#" data-gistfilename="#gistFilename#" data-gistdescription="#gistBeanArgs.description#">#Trim(HTMLEditFormat(gistContent))#</pre>';
 						body = ReplaceNoCase(body, originalGist, newGist);
+						gistID = result.id;
 					}
 				}
 			}
+
+			// now create/update the Gist(s)
+
+
+
 		}
 
 		if ( !StructIsEmpty(errors) ) {
@@ -162,14 +189,17 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 		set$(arguments.$);
 	}
 
+
 	// --------------------------------------------------------------------------------------
 	//	HELPERS
 
-	public any function getGistService(required struct $) {
-		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
-		var password = Len(arguments.$.siteConfig('gistPassword')) ? arguments.$.siteConfig('gistPassword') : pluginConfig.getSetting('gistPassword');
-		var gistService = StructKeyExists(variables, 'gistService') ? variables.gistService : new lib.gist(username=username, password=password);
-		return gistService;
+	public any function getGistBean(
+		string id=''
+		, string content=''
+		, boolean public=true
+		, struct files={}
+	) {
+		return new lib.gist.gistBean(argumentCollection=arguments);
 	}
 
 }
