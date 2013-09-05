@@ -101,6 +101,7 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 		var attrs = '';
 		var defaultGistFilename = Len(arguments.$.siteConfig('gistFilename')) ? arguments.$.siteConfig('gistFilename') : pluginConfig.getSetting('gistFilename');
 		var defaultGistPublic = 1;
+		var defaultGistDescription = newBean.getURL(complete=true);
 		var result = { id = '' };
 		var gistBean = '';
 		var gistBeanArgs = {};
@@ -113,8 +114,6 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 		if ( !muraGistManager.isConnected() ) {
 			StructAppend(errors, {'e#StructCount(errors)+1#': 'Connection Failure. Either github.com is down or you have no connection to the Internet. In other words, it is not possible to save your Gist at this time.'});
 		} else {
-
-			gistBeans = {};
 
 			for ( gist in gists ) {
 				originalGist = gist;
@@ -134,7 +133,9 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 					// Filenames must be unique for each file under a Gist
 					gistFilename = StructKeyExists(attrs, 'data-gistfilename') && Len(attrs['data-gistfilename']) ? attrs['data-gistfilename'] : defaultGistFilename;
 					if ( ArrayFind(gistFilenames, gistFilename) ) {
-						gistFilename = ListFirst(gistFilename, '.', false) & idx & '.' & ListLast(gistFilename, '.', false);
+						gistFilename = ReFindNoCase('\.', gistFilename) 
+							? ListFirst(gistFilename, '.', false) & idx & '.' & ListLast(gistFilename, '.', false)
+							: gistFilename & idx;
 					}
 					ArrayAppend(gistFilenames, gistFilename);
 
@@ -143,10 +144,10 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 					gistBeanArgs = {
 						'id': StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID
 						, 'public' = StructKeyExists(attrs, 'data-gistpublic') ? attrs['data-gistpublic'] : defaultGistPublic
-						, 'description' = StructKeyExists(attrs, 'data-gistdescription') ? attrs['data-gistdescription'] : ''
+						, 'description' = StructKeyExists(attrs, 'data-gistdescription') && Len(attrs['data-gistdescription']) ? attrs['data-gistdescription'] : defaultGistDescription
 						, 'files' = {
 							'#gistFilename#' = {
-								'content' = gistContent
+								'content' = Len(Trim(gistContent)) ? gistContent : JavaCast('null', '')
 							}
 						}
 						, 'gistManager' = muraGistManager
@@ -160,22 +161,16 @@ component accessors=true extends='mura.plugin.pluginGenericEventHandler' output=
 						StructAppend(errors, {
 							'e#StructCount(errors)+1#': 'An error occured while attempting to save a Gist.'
 							, 'e#StructCount(errors)+2#': 'Error Message: #e.message#'
-							, 'e#StructCount(errors)+3#': 'Error Detail: #e.detail#'
 						});
 					}
 
-					if ( Len(result.id) ) {
-						newGist = '<pre class="#attrs.class#" data-gistid="#result.id#" data-gistfilename="#gistFilename#" data-gistdescription="#gistBeanArgs.description#">#Trim(HTMLEditFormat(gistContent))#</pre>';
+					if ( Len(result.id) || !Len(gistContent) ) {
+						newGist = Len(gistContent) ? '<pre class="#attrs.class#" data-gistid="#result.id#" data-gistfilename="#gistFilename#" data-gistdescription="#gistBeanArgs.description#">#Trim(HTMLEditFormat(gistContent))#</pre>' : '';
 						body = ReplaceNoCase(body, originalGist, newGist);
 						gistID = result.id;
 					}
 				}
 			}
-
-			// now create/update the Gist(s)
-
-
-
 		}
 
 		if ( !StructIsEmpty(errors) ) {

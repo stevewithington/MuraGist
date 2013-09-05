@@ -57,7 +57,7 @@
 				<validation>none</validation>
 				<regex></regex>
 				<message></message>
-				<defaultvalue>index.cfm</defaultvalue>
+				<defaultvalue>file1.cfm</defaultvalue>
 				<optionlist></optionlist>
 				<optionlabellist></optionlabellist>
 			</setting>
@@ -71,7 +71,7 @@
 		</eventHandlers>
 
 		<displayobjects location="global">
-			<!-- Maybe Future Option ... however, this wasn't the point of the plugin -->
+			<!-- coming soon -->
 			<!-- <displayobject
 				name="Display Gist"  
 				component="extensions.contentRenderer"
@@ -113,7 +113,7 @@
 						label="Default Gist Filename"
 						hint=""
 						type="text"
-						defaultValue="index.cfm"
+						defaultValue="file1.cfm"
 						required="false"
 						validation=""
 						regex=""

@@ -35,7 +35,7 @@ component output="false" accessors="true" {
 			, initialResponse = {}
 			, response = {}
 			, id = ''
-			, gistBean = SerializeJSON(arguments.gistBean)
+			, gistBean = arguments.gistBean
 		};
 
 		if ( isConnected() ) {
@@ -45,7 +45,10 @@ component output="false" accessors="true" {
 				gistExists = isValidResponse(result.initialResponse);
 			}
 
-			result.response = gistExists ? edit(arguments.gistBean) : create(arguments.gistBean);
+			//result.response = gistExists ? edit(arguments.gistBean) : create(arguments.gistBean);
+			result.response = gistExists 
+				? edit(argumentCollection=arguments.gistBean.getAllValues()) 
+				: create(argumentCollection=arguments.gistBean.getAllValues());
 
 			result.parsedJSON = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
 				? DeserializeJSON(result.response.Filecontent)
@@ -157,24 +160,36 @@ component output="false" accessors="true" {
 		return r;
 	}
 
-	public any function create(required struct gistBean) {
-		var input = SerializeJSON(arguments.gistBean);
+	// public any function create(required struct gistBean) {
+	// 	var input = SerializeJSON(arguments.gistBean);
+	public any function create(required struct files, boolean public=true, string description='') {
+		var input = SerializeJSON({
+			'public' = '#arguments.public#'
+			, 'description' = '#arguments.description#'
+			, 'files' = arguments.files
+		});
 		var url = getAPIURL() & '/gists';
 		var params = {
 			input = { type='body', value=input }
 		};
-		return ping(url=url, method='POST', params=params);
+		var r = ping(url=url, method='POST', params=params);
+		return r;
 	}
 
-	public any function edit(required struct gistBean) {
-		var input = SerializeJSON(arguments.gistBean);
-		var url = getAPIURL() & '/gists/' & arguments.gistBean.getID();
+	// public any function edit(required struct gistBean) {
+	// 	var input = SerializeJSON(arguments.gistBean);
+	public any function edit(required string id, required struct files, string description='') {
+		var input = SerializeJSON({
+			'description' = '#arguments.description#'
+			, 'files' = arguments.files
+		});
+		var url = getAPIURL() & '/gists/' & arguments.id; //arguments.gistBean.getID();
 		var params = {
 			input = { type='body', value=input }
 		};
-		CacheRemove(arguments.gistBean.getID());
-		// method='PATCH' throws an error, so using 'POST' instead
-		return ping(url=url, method='POST', params=params);
+		var r = ping(url=url, method='POST', params=params); // method='PATCH' throws an error, so using 'POST' instead
+		CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
+		return r;
 	}
 
 	public any function star(required string id) {
