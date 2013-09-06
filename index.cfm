@@ -18,14 +18,7 @@
 <div id="bodyWrap">
 	<h1>#HTMLEditFormat(pluginConfig.getName())#</h1>
 
-	<p class="intro">This is a <a href="http://getmura.com">Mura CMS</a> plugin that enables easy interaction with <a href="https://gist.github.com">Gists.</a></p>
-
-	<h2>Key Features</h2>
-	<ul>
-		<li>Display Objects</li>
-		<li>Configurable Display Objects</li>
-		<li>Create &amp; Manage Gists</li>
-	</ul>
+	<p class="intro">This is a <a href="http://getmura.com">Mura CMS</a> plugin that enables users to create, manage and display <a href="https://gist.github.com">Gists</a> within their content.</p>
 
 	<h2>Instructions</h2>
 
@@ -49,7 +42,6 @@
 		</li>
 	</ul>
 
-
 	<h2>Designers / Developers</h2>
 	<p>The 'Plugin Display Objects' may also be added directly onto your template or even dropped into a content region using <strong>[mura]</strong> tags.</p>
 
@@ -61,7 +53,7 @@
 	<h4>CFML Method</h4>
 	<pre class="notice">##$.dspGist(gistID='YourGistID')##</pre>
 
-		<h4>Available Attributes</h4>
+	<h4>Available Attributes</h4>
 	<table class="table">
 		<thead>
 			<tr>

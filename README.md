@@ -1,14 +1,41 @@
 #MuraGist
 
-This is a [Mura CMS](http://getmura.com) plugin that enables easy interaction with [Gists](https://gist.github.com).
+This is a [Mura CMS](http://getmura.com) plugin that enables users to create, manage and display [Gists](https://gist.github.com) within their content.
 
-## Key Features
-* Display Objects
-* Configurable Display Objects
-* Create & Manage Gists
+##Instructions
 
-## Instructions
-Coming soon.
+###Plugin Display Objects
+There is one display object available:
+
+#### Display Gist
+* Go to the **Edit Content** screen of a content item
+* Select the **Layout &amp; Objects** tab
+* Select **Plugins** from the Available Content Objects select menu
+* Select **MuraGist** from the list of Plugins
+* Select **Display Gist** and assign it to your desired display region (e.g., Left Column, Main Content, etc.)
+* This should launch the **MuraGist Configurator** window
+* Paste/Enter your Gist ID into the Gist ID form field
+* Optionally paste/enter your desired Gist filename into the Gist Filename form field. (Some Gists have more than one file associated with it. If you wish to display a specific file, enter the filename, or else all files associated with the Gist will be rendered.)
+* Click **Save**
+* Then, Publish your content and preview
+
+##Designers / Developers
+The 'Plugin Display Objects' may also be added directly onto your template or even dropped into a content region using **[mura]** tags.
+
+###Example Code
+
+####Mura Tag Method
+`[mura]$.dspGist(gistID='YourGistID')[/mura]`
+
+####CFML Method
+`#$.dspGist(gistID='YourGistID')#`
+
+####Available Attributes
+
+| Attribute 		| Req/Opt 	| Default 			| Description 								|
+| ---				| ---		| ---				| ---										|
+| `gistID`			| Required 	| 					| The ID of the Gist you wish to display. 	|
+| `gistFilename`	| Optional 	| `{empty string}` 	| Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here. 	|
 
 
 ##Tested With
