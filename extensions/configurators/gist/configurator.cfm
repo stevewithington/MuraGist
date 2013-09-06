@@ -45,7 +45,7 @@
 
 			<!--- Gist Filename --->
 			<div class="control-group">
-				<label for="gistfilename" class="control-label">Gist Filename</label>
+				<label for="gistfilename" class="control-label">Gist Filename (optional)</label>
 				<div class="controls">
 					<input type="text" 
 						name="gistfilename" 
@@ -53,6 +53,7 @@
 						class="objectParam span12" 
 						value="#params.gistfilename#">
 				</div>
+				<p>Some Gists have more than one file associated with it. If you wish to display a specific file, enter the filename, or else all files associated with the Gist will be rendered.</p>
 			</div>
 
 		</div>

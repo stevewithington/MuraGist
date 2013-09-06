@@ -1,6 +1,14 @@
 #MuraGist
 
-Info coming soon.
+This is a [Mura CMS](http://getmura.com) plugin that enables easy interaction with [Gists](https://gist.github.com).
+
+## Key Features
+* Display Objects
+* Configurable Display Objects
+* Create & Manage Gists
+
+## Instructions
+Coming soon.
 
 
 ##Tested With

@@ -17,11 +17,14 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 	include '../plugin/settings.cfm';
 
 	public any function onApplicationLoad($) {
+		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.onApplicationLoad');
 		variables.pluginConfig.addEventHandler(this);
+		arguments.$.commitTracePoint(tp);
 		set$(arguments.$);
 	}
 
 	public any function onSiteRequestStart($) {
+		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.onBeforeContentSave');
 		var contentRenderer = new contentRenderer(arguments.$);
 		var muraGistManager = getMuraGistManager(arguments.$);
 		arguments.$.setCustomMuraScopeKey(variables.settings.package, contentRenderer);
@@ -34,10 +37,12 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 			, contentRenderer.dspGist
 		);
 
+		arguments.$.commitTracePoint(tp);
 		set$(arguments.$);
 	}
 
 	public any function onRenderEnd($) {
+		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.onRenderEnd');
 		var body = arguments.$.event('__MuraResponse__');
 		var gists = ReMatch('(\<pre.*?\>).+?(\</pre\>)', body); // array of code blocks wrapped with <pre> tags
 		var gist = '';
@@ -81,11 +86,12 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 			}
 		}
 		arguments.$.event('__MuraResponse__', body);
-
+		arguments.$.commitTracePoint(tp);
 		set$(arguments.$);
 	}
 
 	public any function onBeforeContentSave($) {
+		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.onBeforeContentSave');
 		var muraGistManager = getMuraGistManager(arguments.$);
 		var errors = {};
 		var error = '';
@@ -176,16 +182,19 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 			newBean.setBody(body);
 		}
 
+		arguments.$.commitTracePoint(tp);
 		set$(arguments.$);
 	}
 
 	// --------------------------------------------------------------------------------------
 	//	HELPERS
 	public any function getMuraGistManager($=get$()) {
+		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.getMuraGistManager');
 		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
 		var password = Len(arguments.$.siteConfig('gistPassword')) ? arguments.$.siteConfig('gistPassword') : pluginConfig.getSetting('gistPassword');
 		var muraGistGateway = new lib.gist.gistGateway(username=username, password=password);
 		var muraGistManager = new lib.gist.gistManager(muraGistGateway);
+		arguments.$.commitTracePoint(tp);
 		return muraGistManager;
 	}
 

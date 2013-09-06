@@ -17,7 +17,7 @@ function initMuraGistConfigurator(data) {
 		, destroy: function(){}
 		, validate: function(){
 			// simple js validation
-			if ( !jQuery('#gistID').val() ) {
+			if ( !jQuery('#gistid').val() ) {
 				var response = alert('Please enter a Gist ID');
 				return false;
 			}

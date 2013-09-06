@@ -19,21 +19,22 @@ component output="false" accessors="true" extends="mura.cfobject" {
 	}
 
 	public any function dspGist(string gistID='', string gistFilename='') {
-		var gistManager = variables.$.muraGistManager;
-		gist = gistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
+		var muraGistManager = variables.$.muraGistManager;
+		gist = muraGistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
 		return Len(gist) ? gist : '';
 	}
 
 	/* 
 	* CONFIGURABLE DISPLAY OBJECT(S)
 	* --------------------------------------------------------------------- */
-	public any function dspConfiguredGist() {
-		var params = variables.$.event('objectParams');
+	public any function dspConfiguredGist($) {
+		var params = arguments.$.event('objectParams');
 		var defaultParams = { 
 			gistID = ''
 			, gistFilename = ''
 		};
 		StructAppend(local.params, local.defaultParams, false);
+		variables.$ = arguments.$;
 		return dspGist(argumentCollection=local.params);
 	}
 
