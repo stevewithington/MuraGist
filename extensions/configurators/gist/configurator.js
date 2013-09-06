@@ -2,12 +2,12 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr.
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
 */
-function initSayAnythingConfigurator(data) {
+function initMuraGistConfigurator(data) {
 
 	initConfigurator(data,{
 		url: '../plugins/MuraGist/extensions/configurators/gist/configurator.cfm'
@@ -17,10 +17,10 @@ function initSayAnythingConfigurator(data) {
 		, destroy: function(){}
 		, validate: function(){
 			// simple js validation
-			// if ( !jQuery('#message').val() ) {
-			// 	var response = alert('Please say something!');
-			// 	return false;
-			// }
+			if ( !jQuery('#gistID').val() ) {
+				var response = alert('Please enter a Gist ID');
+				return false;
+			}
 			return true;
 		}
 	});

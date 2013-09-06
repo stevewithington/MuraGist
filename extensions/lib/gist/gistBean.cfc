@@ -1,7 +1,10 @@
 /**
+* 
+* This file is part of MuraGist
 *
-* @file  gistBean.cfc
-* @author  Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Licensed under the Apache License, Version v2.0
+* http://www.apache.org/licenses/LICENSE-2.0
 *
 */
 component output="false" accessors="true" {

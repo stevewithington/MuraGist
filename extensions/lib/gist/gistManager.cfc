@@ -1,31 +1,22 @@
 /**
+* 
+* This file is part of MuraGist
 *
-* @file  gistManager.cfc
-* @author  Stephen J. Withington, Jr.
-* @description Gist API Wrapper (http://developer.github.com/v3/gists/)
-* @ratelimits Github limits authenticated requests to 5000 per hour. So, where possible, baked-in cfml caching is used. (https://learn.adobe.com/wiki/display/coldfusionen/Cache+functions)
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Licensed under the Apache License, Version v2.0
+* http://www.apache.org/licenses/LICENSE-2.0
+* 
+* @description 	Gist API Wrapper <http://developer.github.com/v3/gists/>
+* @ratelimits 	Github limits authenticated requests to 5000 per hour, so baked-in cfml caching is used in some areas.
 *
 */
 component output="false" accessors="true" {
 
-	property name='username';
-	property name='password';
-	property name='apiurl';
+	property name='gistGateway';
 
-	public gistManager function init(required string username, required string password, string apiURL='https://api.github.com') {
-		setUsername(arguments.username);
-		setPassword(arguments.password);
-		setAPIURL(arguments.apiURL);
+	public gistManager function init(required gistGateway) {
+		setGistGateway(arguments.gistGateway);
 		return this;
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	HELPERS
-
-	public boolean function isConnected() {
-		return true;
-		var response = ping(getAPIURL());
-		return IsDefined('response.Responseheader.Status');
 	}
 
 	public any function save(required struct gistBean) {
@@ -38,25 +29,26 @@ component output="false" accessors="true" {
 			, gistBean = arguments.gistBean
 		};
 
-		if ( isConnected() ) {
-
-			if ( Len(arguments.gistBean.getID()) ) {
-				result.initialResponse = getByID(id=arguments.gistBean.getID(), cached=false);
-				gistExists = isValidResponse(result.initialResponse);
-			}
-
-			//result.response = gistExists ? edit(arguments.gistBean) : create(arguments.gistBean);
-			result.response = gistExists 
-				? edit(argumentCollection=arguments.gistBean.getAllValues()) 
-				: create(argumentCollection=arguments.gistBean.getAllValues());
-
-			result.parsedJSON = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
-				? DeserializeJSON(result.response.Filecontent)
-				: {};
-
-			result.id = StructKeyExists(result.parsedJSON, 'id') ? result.parsedJSON.id : '';
-			result.saved = Len(result.id) ? true : false;
+		if ( Len(arguments.gistBean.getID()) ) {
+			result.initialResponse = getGistGateway().getByID(id=arguments.gistBean.getID(), cached=false);
+			gistExists = isValidResponse(result.initialResponse);
 		}
+
+		result.response = gistExists 
+			? getGistGateway().edit(argumentCollection=arguments.gistBean.getAllValues()) 
+			: getGistGateway().create(argumentCollection=arguments.gistBean.getAllValues());
+
+		result.parsedJSON = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
+			? DeserializeJSON(result.response.Filecontent)
+			: {};
+
+		result.id = IsDefined('result.parsedJSON.id') 
+			? result.parsedJSON.id 
+			: '';
+
+		result.saved = Len(result.id) 
+			? true 
+			: false;
 
 		return result;
 	}
@@ -64,23 +56,27 @@ component output="false" accessors="true" {
 	public any function getGistScript(required string id, string file='', boolean cached=true) {
 		var gistURL = 'https://gist.github.com/' & arguments.id & '.js';
 		var cacheID = '';
-		var r = '';
+		var response = '';
 
-		if ( !IsConnected() ) { return ''; }
-		if ( Len(arguments.file) ) { gistURL &= '?file=' & arguments.file; }
+		if ( Len(arguments.file) ) { 
+			gistURL &= '?file=' & arguments.file; 
+		}
 
 		cacheID = Hash(gistURL);
 
-		r = !arguments.cached
-				|| !ArrayFindNoCase(CacheGetAllIDs(), cacheID) 
-				|| (ArrayFindNoCase(CacheGetAllIDs(), cacheID) && !IsJSON(CacheGet(cacheID).Filecontent) )
-					? ping(url=gistURL, method='GET')
-					: CacheGet(cacheID);
+		try {
+			response = !arguments.cached
+					|| !ArrayFindNoCase(CacheGetAllIDs(), cacheID) 
+					|| (ArrayFindNoCase(CacheGetAllIDs(), cacheID) && !IsJSON(CacheGet(cacheID).Filecontent) )
+						? getGistGateway().ping(url=gistURL, method='GET')
+						: CacheGet(cacheID);
+		} catch(any e) {
+			// no reason to crash ... will just return an empty string
+		}
 
-		CachePut(cacheID, r, CreateTimeSpan(0,1,0,0));
-
-		switch(isValidResponse(r)) {
+		switch(isValidResponse(response)) {
 			case true :
+				CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
 				return '<script src="#gistURL#"></script>';
 				break;
 			default :
@@ -88,35 +84,12 @@ component output="false" accessors="true" {
 		}
 	}
 
-	public any function getGistFilecontent(struct response) {
-		var r = arguments.response;
-		switch(isValidResponse(r)) {
-			case true :
-				return IsJSON(r.Filecontent) ? DeSerializeJSON(r.Filecontent) : r.Filecontent;
-				break;
-			default :
-				return {};
-		}
-	}
-
-	public any function getGistStatusCode(struct response) {
-		var r = arguments.response;
-
-		switch (isValidResponse(r)) {
-			case true :
-				return r.Responseheader.Status_Code;
-				break;
-			default : 
-				return 000;
-		}
-	}
-
-	public any function isValidResponse(struct response) {
-		var r = arguments.response;
+	public boolean function isValidResponse(required any response) {
+		var resp = arguments.response;
 		var isValid = false;
 
 		try {
-			switch (r.Responseheader.Status_Code) {
+			switch (resp.Responseheader.Status_Code) {
 				case 200 : // OK ... gist found, gist updated, list found, etc.
 					isValid = true;
 					break;
@@ -135,145 +108,10 @@ component output="false" accessors="true" {
 				default : // unknown status code
 			}
 		} catch(any e) {
-			// any other errors probably means user is not connected to Internet
+			// any other errors probably means user is not connected to Internet, or the response is an empty string
 		}
 
 		return isValid;
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	GISTS
-
-	public any function list() {
-		var url = getAPIURL() & '/users/' & getUsername() & '/gists';
-		return ping(url=url, method='GET');
-	}
-
-	public any function getByID(required string id, boolean cached=true) {
-		var url = getAPIURL() & '/gists/' & arguments.id;
-		var r = !arguments.cached
-				|| !ArrayFindNoCase(CacheGetAllIDs(), arguments.id) 
-				|| ( ArrayFindNoCase(CacheGetAllIDs(), arguments.id) && !IsJSON(CacheGet(arguments.id).Filecontent) )
-					? ping(url=url, method='GET')
-					: CacheGet(arguments.id);
-		CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
-		return r;
-	}
-
-	// public any function create(required struct gistBean) {
-	// 	var input = SerializeJSON(arguments.gistBean);
-	public any function create(required struct files, boolean public=true, string description='') {
-		var input = SerializeJSON({
-			'public' = '#arguments.public#'
-			, 'description' = '#arguments.description#'
-			, 'files' = arguments.files
-		});
-		var url = getAPIURL() & '/gists';
-		var params = {
-			input = { type='body', value=input }
-		};
-		var r = ping(url=url, method='POST', params=params);
-		return r;
-	}
-
-	// public any function edit(required struct gistBean) {
-	// 	var input = SerializeJSON(arguments.gistBean);
-	public any function edit(required string id, required struct files, string description='') {
-		var input = SerializeJSON({
-			'description' = '#arguments.description#'
-			, 'files' = arguments.files
-		});
-		var url = getAPIURL() & '/gists/' & arguments.id; //arguments.gistBean.getID();
-		var params = {
-			input = { type='body', value=input }
-		};
-		var r = ping(url=url, method='POST', params=params); // method='PATCH' throws an error, so using 'POST' instead
-		CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
-		return r;
-	}
-
-	public any function star(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='PUT');
-	}
-
-	public any function unstar(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='DELETE');
-	}
-
-	public any function starcheck(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='GET');
-	}
-
-	public any function fork(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/forks';
-		return ping(url=url, method='POST');
-	}
-
-	public any function delete(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id;
-		CacheRemove(arguments.id);
-		return ping(url=url, method='DELETE');
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	GIST COMMENTS
-
-	public any function listComments(required string gistid) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments';
-		return ping(url=url, method='GET');
-	}
-
-	public any function getCommentByID(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		var cacheID = Hash(arguments.gistid & '-' & arguments.id);
-		var response = !ArrayFindNoCase(CacheGetAllIDs(), cacheID)
-				? ping(url=url, method='GET')
-				: CacheGet(cacheID);
-		CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
-		return response;
-	}
-
-	public any function createComment(required string gistid) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments';
-		return ping(url=url, method='POST');
-	}
-
-	public any function editComment(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		// method='PATCH' throws an error, so using 'POST' instead
-		return ping(url=url, method='POST');
-	}
-
-	public any function deleteComment(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		return ping(url=url, method='DELETE');
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	PRIVATE
-
-	private any function ping(required string url, string method='get', struct params={}, boolean useCredentials=true) {
-		var response = {};
-		var i = '';
-		var http = new http();
-		http.setCharset('utf-8')
-			.setMethod(arguments.method)
-			.setURL(arguments.url);
-
-		if ( arguments.useCredentials ) {
-			http.setUsername(getUsername()).setPassword(getPassword());
-		}
-
-		if ( !StructIsEmpty(arguments.params) ) {
-			for ( i in arguments.params ) {
-				http.addParam(argumentCollection=arguments.params[i]);
-			}
-		}
-
-		return http.send().getPrefix();
 	}
 
 }

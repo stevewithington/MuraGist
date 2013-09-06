@@ -2,12 +2,12 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr.
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
 */
-component accessors=true extends='mura.cfobject' output=false {
+component output="false" accessors="true" extends="mura.cfobject" {
 
 	property name='$';
 
@@ -18,45 +18,23 @@ component accessors=true extends='mura.cfobject' output=false {
 		return this;
 	}
 
-	/* 
-	* CONFIGURED DISPLAY OBJECTS
-	* --------------------------------------------------------------------- */
-
-	// This method will be called by dspConfiguredGist()
-
 	public any function dspGist(string gistID='', string gistFilename='') {
-		var $ = StructKeyExists(arguments, '$') ? arguments.$ : get$();
-		//var gistService = $.gistService;
-		//gist = gistService.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
-		//return Len(gist) ? '<div class="gist-wrapper">' & gist & '</div>' : '';
-		return '';
+		var gistManager = variables.$.muraGistManager;
+		gist = gistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
+		return Len(gist) ? gist : '';
 	}
 
-	public any function dspConfiguredGist(required struct $) {
-		var local = {};
-		set$(arguments.$);
-
-		local.params = arguments.$.event('objectParams');
-
-		local.defaultParams = { 
+	/* 
+	* CONFIGURABLE DISPLAY OBJECT(S)
+	* --------------------------------------------------------------------- */
+	public any function dspConfiguredGist() {
+		var params = variables.$.event('objectParams');
+		var defaultParams = { 
 			gistID = ''
-			, gistDescription = ''
-			, gistPublic = true
-			, gistFiles = {}
+			, gistFilename = ''
 		};
-
 		StructAppend(local.params, local.defaultParams, false);
-
 		return dspGist(argumentCollection=local.params);
 	}
-
-	// public any function getGistBean(
-	// 	string id=''
-	// 	, string description=''
-	// 	, boolean public=true
-	// 	, struct files={}
-	// ) {
-	// 	return new lib.gist.gistBean(argumentCollection=arguments);
-	// }
 
 }

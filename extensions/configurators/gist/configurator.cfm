@@ -3,7 +3,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr.
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -17,16 +17,11 @@
 
 	defaultParams = {
 		gistid = ''
+		, gistfilename = ''
 	};
 	
 	StructAppend(params, defaultParams, false);
 </cfscript>
-<!---
-<style type="text/css">
-	#availableObjectParams dt { padding-top:1em; }
-	#availableObjectParams dt.first { padding-top:0; }
-</style>
---->
 <cfoutput>
 
 	<div id="availableObjectParams"	
@@ -38,13 +33,25 @@
 
 			<!--- Gist ID --->
 			<div class="control-group">
-				<label for="size" class="control-label">Gist ID</label>
+				<label for="gistid" class="control-label">Gist ID</label>
 				<div class="controls">
 					<input type="text" 
 						name="gistid" 
 						id="gistid" 
 						class="objectParam span12" 
 						value="#params.gistid#">
+				</div>
+			</div>
+
+			<!--- Gist Filename --->
+			<div class="control-group">
+				<label for="gistfilename" class="control-label">Gist Filename</label>
+				<div class="controls">
+					<input type="text" 
+						name="gistfilename" 
+						id="gistfilename" 
+						class="objectParam span12" 
+						value="#params.gistfilename#">
 				</div>
 			</div>
 

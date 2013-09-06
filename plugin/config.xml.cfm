@@ -3,7 +3,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr.
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -71,14 +71,13 @@
 		</eventHandlers>
 
 		<displayobjects location="global">
-			<!-- coming soon -->
-			<!-- <displayobject
+			<displayobject
 				name="Display Gist"  
 				component="extensions.contentRenderer"
 				displaymethod="dspConfiguredGist"
 				configuratorJS="extensions/configurators/gist/configurator.js"
-				configuratorInit="initGistConfigurator"
-				persist="false" /> -->
+				configuratorInit="initMuraGistConfigurator"
+				persist="false" />
 		</displayobjects>
 
 		<extensions>
