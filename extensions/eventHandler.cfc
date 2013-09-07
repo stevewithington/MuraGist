@@ -44,7 +44,8 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 	public any function onRenderEnd($) {
 		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.onRenderEnd');
 		var body = arguments.$.event('__MuraResponse__');
-		var gists = ReMatch('(\<pre.*?\>).+?(\</pre\>)', body); // array of code blocks wrapped with <pre> tags
+		var regex = '(?i)(<pre[^>]+>).+?(</pre>)';
+		var gists = reFindMatches(regex, body); // array of code blocks wrapped with <pre> tags
 		var gist = '';
 		var originalGist = '';
 		var xml = '';
@@ -100,7 +101,8 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 		var oldBean = arguments.$.event('contentBean');
 		var body = newBean.getBody();
 		var gist = '';
-		var gists = ReMatch('(\<pre.*?\>).+?(\</pre\>)', body); // array of code blocks wrapped with <pre> tags
+		var regex = '(?i)(<pre[^>]+>).+?(</pre>)';
+		var gists = reFindMatches(regex, body); // array of code blocks wrapped with <pre> tags
 		var originalGist = '';
 		var newGist = '';
 		var xml = '';
@@ -196,6 +198,22 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 		var muraGistManager = new lib.gist.gistManager(muraGistGateway);
 		arguments.$.commitTracePoint(tp);
 		return muraGistManager;
+	}
+
+	public array function reFindMatches(required string regex, required string str) {
+		var start = 1;
+		var result = [];
+		var matches	= [];
+		var match = '';
+		do {
+			matches = ReFind(arguments.regex, arguments.str, start, true);
+			if ( matches.pos[1] ) {
+				match = matches.len[1] ? Mid(arguments.str, matches.pos[1], matches.len[1]) : '';
+				ArrayAppend(result, match);
+				start = matches.pos[1] + matches.len[1];
+			}
+		} while(matches.pos[1]);
+		return result;
 	}
 
 }

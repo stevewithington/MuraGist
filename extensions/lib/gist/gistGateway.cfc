@@ -38,7 +38,7 @@ component output="false" accessors="true" {
 				|| ( ArrayFindNoCase(CacheGetAllIDs(), arguments.id) && !IsJSON(CacheGet(arguments.id).Filecontent) )
 					? ping(url=url, method='GET')
 					: CacheGet(arguments.id);
-		if ( IsDefine(r.Filecontent) && IsJSON(r.Filecontent) ) {
+		if ( IsDefined('r.Filecontent') && IsJSON(r.Filecontent) ) {
 			CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
 		}
 		return r;
