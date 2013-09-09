@@ -24,7 +24,7 @@
 		<settings>
 			<setting>
 				<name>gistUsername</name>
-				<label>Gist Account Username</label>
+				<label>Github Account Username</label>
 				<hint>You can override this setting on the Site Settings &gt; Extended Attribute Tab</hint>
 				<type>text</type>
 				<required>false</required>
@@ -36,9 +36,9 @@
 				<optionlabellist></optionlabellist>
 			</setting>
 			<setting>
-				<name>gistPassword</name>
-				<label>Gist Account Password</label>
-				<hint>You can override this setting on the Site Settings &gt; Extended Attribute Tab</hint>
+				<name>gistToken</name>
+				<label>Github Personal Access Token</label>
+				<hint>Log in to Github, go to Account Settings, select 'Applications' and create a 'Personal Access Token'</hint>
 				<type>text</type>
 				<required>false</required>
 				<validation>none</validation>
@@ -85,7 +85,7 @@
 				<attributeset name="MuraGist Options" container="Default">
 					<attribute 
 						name="gistUsername"
-						label="Gist Username"
+						label="Github Account Username"
 						hint=""
 						type="text"
 						defaultValue=""
@@ -96,9 +96,9 @@
 						optionList=""
 						optionLabelList="" />
 					<attribute 
-						name="gistPassword"
-						label="Gist Password"
-						hint=""
+						name="gistToken"
+						label="Github Personal Access Token"
+						hint="Log in to Github, go to Account Settings, select 'Applications' and create a 'Personal Access Token'"
 						type="text"
 						defaultValue=""
 						required="false"

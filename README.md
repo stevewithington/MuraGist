@@ -41,7 +41,7 @@ The 'Plugin Display Objects' may also be added directly onto your template or ev
 ##Tested With
 * Mura CMS Core Version 6.1+
 * Adobe ColdFusion 10.0.9
-* Railo 4.0.4
+* Railo 4.1.1
 
 
 ##License

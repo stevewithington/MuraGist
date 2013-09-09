@@ -36,6 +36,7 @@ component output="false" accessors="true" extends="mura.cfobject" {
 		var defaultParams = { 
 			gistID = ''
 			, gistFilename = ''
+			, gistDisplayMessage = true
 		};
 		StructAppend(local.params, local.defaultParams, false);
 		variables.$ = arguments.$;

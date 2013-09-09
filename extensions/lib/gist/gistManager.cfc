@@ -53,7 +53,7 @@ component output="false" accessors="true" {
 		return result;
 	}
 
-	public any function getGistScript(required string id, string file='', boolean cached=true) {
+	public any function getGistScript(required string id, string file='', boolean cached=false, boolean debug=false) {
 		var gistURL = 'https://gist.github.com/' & arguments.id & '.js';
 		var cacheID = '';
 		var response = '';
@@ -71,7 +71,9 @@ component output="false" accessors="true" {
 						? getGistGateway().ping(endpoint=gistURL, method='GET')
 						: CacheGet(cacheID);
 		} catch(any e) {
-			// no reason to crash ... will just return an empty string
+			if (arguments.debug) { 
+				WriteDump(var=e, abort=1); 
+			}
 		}
 
 		switch(isValidResponse(response)) {
@@ -99,7 +101,7 @@ component output="false" accessors="true" {
 				case 204 : // gist deleted, or gist starred, unstarred
 					isValid = true;
 					break;
-				case 401 : // bad credentials
+				case 401 : // bad credentials OR two-factor authentication required (not enabled for this plugin yet)
 					break;
 				case 403 : // potentially several different issues such as too many login attempts
 					break;

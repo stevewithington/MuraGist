@@ -190,11 +190,12 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 
 	// --------------------------------------------------------------------------------------
 	//	HELPERS
+
 	public any function getMuraGistManager($=get$()) {
 		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.getMuraGistManager');
 		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
-		var password = Len(arguments.$.siteConfig('gistPassword')) ? arguments.$.siteConfig('gistPassword') : pluginConfig.getSetting('gistPassword');
-		var muraGistGateway = new lib.gist.gistGateway(username=username, password=password);
+		var token = Len(arguments.$.siteConfig('gistToken')) ? arguments.$.siteConfig('gistToken') : pluginConfig.getSetting('gistToken');
+		var muraGistGateway = new lib.gist.gistGateway(apiUsername=username, apiToken=token);
 		var muraGistManager = new lib.gist.gistManager(muraGistGateway);
 		arguments.$.commitTracePoint(tp);
 		return muraGistManager;
