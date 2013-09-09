@@ -18,15 +18,14 @@ component output="false" accessors="true" extends="mura.cfobject" {
 		return this;
 	}
 
-	public any function dspGist(string gistID='', string gistFilename='', boolean displayNotice=true) {
+	public any function dspGist(string gistID='', string gistFilename='', boolean displayMessage=true) {
 		var muraGistManager = variables.$.muraGistManager;
-		gist = muraGistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
+		var gist = muraGistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
 		return Len(gist) 
 			? gist 
-			: arguments.displayNotice
+			: arguments.displayMessage
 				? '<p class="notice">Gist ###arguments.gistID# could not be found. Maybe it no longer exists, or the Gist service is currently unavailable.</p>'
 				: '';
-
 	}
 
 	/* 

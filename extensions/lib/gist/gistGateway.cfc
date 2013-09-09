@@ -26,17 +26,12 @@ component output="false" accessors="true" {
 	// --------------------------------------------------------------------------------------
 	//	GISTS
 
-	public any function list() {
-		var url = getAPIURL() & '/users/' & getUsername() & '/gists';
-		return ping(url=url, method='GET');
-	}
-
 	public any function getByID(required string id, boolean cached=true) {
-		var url = getAPIURL() & '/gists/' & arguments.id;
+		var endpoint = getAPIURL() & '/gists/' & arguments.id;
 		var r = !arguments.cached
 				|| !ArrayFindNoCase(CacheGetAllIDs(), arguments.id) 
 				|| ( ArrayFindNoCase(CacheGetAllIDs(), arguments.id) && !IsJSON(CacheGet(arguments.id).Filecontent) )
-					? ping(url=url, method='GET')
+					? ping(endpoint=endpoint, method='GET')
 					: CacheGet(arguments.id);
 		if ( IsDefined('r.Filecontent') && IsJSON(r.Filecontent) ) {
 			CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
@@ -50,11 +45,11 @@ component output="false" accessors="true" {
 			, 'description' = arguments.description
 			, 'files' = arguments.files
 		});
-		var url = getAPIURL() & '/gists';
+		var endpoint = getAPIURL() & '/gists';
 		var params = {
 			input = { type='body', value=input }
 		};
-		var r = ping(url=url, method='POST', params=params);
+		var r = ping(endpoint=endpoint, method='POST', params=params);
 		return r;
 	}
 
@@ -63,97 +58,51 @@ component output="false" accessors="true" {
 			'description' = arguments.description
 			, 'files' = arguments.files
 		});
-		var url = getAPIURL() & '/gists/' & arguments.id; //arguments.gistBean.getID();
+		var endpoint = getAPIURL() & '/gists/' & arguments.id;
 		var params = {
 			input = { type='body', value=input }
 		};
-		var r = ping(url=url, method='POST', params=params); // method='PATCH' throws an error, so using 'POST' instead
+		var r = ping(endpoint=endpoint, method='POST', params=params); // method='PATCH' throws an error, so using 'POST' instead
 		CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
 		return r;
 	}
 
-	public any function star(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='PUT');
-	}
-
-	public any function unstar(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='DELETE');
-	}
-
-	public any function starcheck(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/star';
-		return ping(url=url, method='GET');
-	}
-
-	public any function fork(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id & '/forks';
-		return ping(url=url, method='POST');
-	}
-
 	public any function delete(required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.id;
+		var endpoint = getAPIURL() & '/gists/' & arguments.id;
 		CacheRemove(arguments.id);
-		return ping(url=url, method='DELETE');
+		return ping(endpoint=endpoint, method='DELETE');
 	}
 
-	// --------------------------------------------------------------------------------------
-	//	GIST COMMENTS
-
-	public any function listComments(required string gistid) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments';
-		return ping(url=url, method='GET');
-	}
-
-	public any function getCommentByID(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		var cacheID = Hash(arguments.gistid & '-' & arguments.id);
-		var response = !ArrayFindNoCase(CacheGetAllIDs(), cacheID)
-				? ping(url=url, method='GET')
-				: CacheGet(cacheID);
-		CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
-		return response;
-	}
-
-	public any function createComment(required string gistid) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments';
-		return ping(url=url, method='POST');
-	}
-
-	public any function editComment(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		// method='PATCH' throws an error, so using 'POST' instead
-		return ping(url=url, method='POST');
-	}
-
-	public any function deleteComment(required string gistid, required string id) {
-		var url = getAPIURL() & '/gists/' & arguments.gistid & '/comments/' & arguments.id;
-		return ping(url=url, method='DELETE');
+	public any function list() {
+		var endpoint = getAPIURL() & '/users/' & getUsername() & '/gists';
+		return ping(endpoint=endpoint, method='GET');
 	}
 
 	// --------------------------------------------------------------------------------------
 	//	HELPERS
 
-	public any function ping(required string url, string method='get', struct params={}, boolean useCredentials=true) {
+	public any function ping(required string endpoint, string method='get', struct params={}) {
 		var response = {};
 		var i = '';
-		var http = new http();
-		http.setCharset('utf-8')
+		var httpService = new http();
+		httpService.setCharset('utf-8')
+			.setUsername(getUsername())
+			.setPassword(getPassword())
 			.setMethod(arguments.method)
-			.setURL(arguments.url);
-
-		if ( arguments.useCredentials ) {
-			http.setUsername(getUsername()).setPassword(getPassword());
-		}
+			.setURL(arguments.endpoint);
+	
 
 		if ( !StructIsEmpty(arguments.params) ) {
 			for ( i in arguments.params ) {
-				http.addParam(argumentCollection=arguments.params[i]);
+				httpService.addParam(argumentCollection=arguments.params[i]);
 			}
 		}
 
-		return http.send().getPrefix();
+		// writeDump(var=arguments, label='ARGS');
+		// writeDump(var=httpService.getAttributes(), label='ATTRIBUTES');
+		// writedump(var=httpService, abort=1);
+
+		return httpService.send().getPrefix();
 	}
 
 }

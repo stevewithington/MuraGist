@@ -57,7 +57,7 @@
 				<validation>none</validation>
 				<regex></regex>
 				<message></message>
-				<defaultvalue>file1.cfm</defaultvalue>
+				<defaultvalue>file.cfm</defaultvalue>
 				<optionlist></optionlist>
 				<optionlabellist></optionlabellist>
 			</setting>
@@ -112,7 +112,7 @@
 						label="Default Gist Filename"
 						hint=""
 						type="text"
-						defaultValue="file1.cfm"
+						defaultValue="file.cfm"
 						required="false"
 						validation=""
 						regex=""

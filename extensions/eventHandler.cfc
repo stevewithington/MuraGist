@@ -66,7 +66,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 				break; // bad gist
 			}
 
-			attrs = xml.pre.XmlAttributes;
+			attrs = xml.XmlRoot.XmlAttributes;
 
 			if ( 
 				StructKeyExists(attrs, 'class') 
@@ -129,7 +129,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 				break; // bad gist
 			}
 
-			attrs = xml.pre.XmlAttributes;
+			attrs = xml.XmlRoot.XmlAttributes;
 
 			if ( StructKeyExists(attrs, 'class') && ListFindNoCase(attrs.class, 'gist', ' ') ) {
 				idx++;
@@ -143,7 +143,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 				}
 				ArrayAppend(gistFilenames, gistFilename);
 
-				gistContent = Len(Trim(xml.pre.XmlText)) ? Trim(xml.pre.XmlText) : '';
+				gistContent = Len(Trim(xml.XmlRoot.XmlText)) ? Trim(xml.XmlRoot.XmlText) : '';
 
 				gistBeanArgs = {
 					'id': StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID

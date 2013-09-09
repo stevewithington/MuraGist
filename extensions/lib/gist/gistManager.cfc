@@ -68,7 +68,7 @@ component output="false" accessors="true" {
 			response = !arguments.cached
 					|| !ArrayFindNoCase(CacheGetAllIDs(), cacheID) 
 					|| (ArrayFindNoCase(CacheGetAllIDs(), cacheID) && !IsJSON(CacheGet(cacheID).Filecontent) )
-						? getGistGateway().ping(url=gistURL, method='GET')
+						? getGistGateway().ping(endpoint=gistURL, method='GET')
 						: CacheGet(cacheID);
 		} catch(any e) {
 			// no reason to crash ... will just return an empty string
