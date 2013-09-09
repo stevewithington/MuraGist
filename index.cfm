@@ -13,6 +13,7 @@
 	#bodyWrap p.intro {font-size:1.25em;}
 	#bodyWrap h3{padding-top:1em;}
 	#bodyWrap ul{padding:0 0.75em 1em;margin:0 0.75em;}
+	.code {font-family: monospace;}
 </style>
 <cfsavecontent variable="body"><cfoutput>
 <div id="bodyWrap">
