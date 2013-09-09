@@ -80,6 +80,14 @@
 					<p>Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here.</p>
 				</td>
 			</tr>
+			<tr>
+				<td class="code">displayMessage</td> 
+				<td>Optional</td>
+				<td class="code">true</td>
+				<td>
+					<p>If a Gist either doesn't exist, do you want to display a message? If `false` then nothing will be displayed.</p>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 
