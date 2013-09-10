@@ -20,9 +20,11 @@ This is a [Mura CMS](http://getmura.com) plugin that enables users to create, ma
 ###Usage
 From the 'Content' area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with `<pre>` tags with a class of `gist`. For example:
 
-```<pre class="gist">
-var x=1;
-</pre>```
+```
+<pre class="gist">
+	var x=1;
+</pre>
+```
 
 ###Plugin Display Objects
 There is one display object available:
