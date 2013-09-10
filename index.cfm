@@ -3,7 +3,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr.
+* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -13,7 +13,7 @@
 	#bodyWrap p.intro {font-size:1.25em;}
 	#bodyWrap h3{padding-top:1em;}
 	#bodyWrap ul{padding:0 0.75em 1em;margin:0 0.75em;}
-	.code {font-family: Courier New, monospace;}
+	#bodyWrap .code {font-family: Courier New, monospace;}
 </style>
 <cfsavecontent variable="body"><cfoutput>
 <div id="bodyWrap">
