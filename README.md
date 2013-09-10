@@ -26,7 +26,7 @@ var x=1;
 </pre>
 ```
 
-Each content item in Mura is considered a **Gist**. A Gist may have one or more `files`. This means you can have more than one code block within the content area. Optionally, you may also specify a unique filename for each code block using the `data-gistfilename` attribute. For example:
+Each content item in Mura is considered a **Gist**. A Gist may contain one or more `files`. This means you can have more than one code block within the content area. Optionally, you may also specify a unique filename for each code block using the `data-gistfilename` attribute. For example:
 
 ```
 <pre class="gist" data-gistfilename="someFile.js">

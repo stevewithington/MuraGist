@@ -27,27 +27,36 @@
 	<p>From the 'Content' area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with <span class="code">&lt;pre&gt;</span> tags with a class of <span class="code">gist</span>. The <span class="code">class</span> attribute may contain multiple class names, if desired. For example:</p>
 
 <pre class="code">&lt;pre class=&quot;gist someOtherClass&quot;&gt;
-	var x=1;
+var x=1;
 &lt;/pre&gt;</pre>
 
-	<p>Each content item in Mura is considered a <strong>Gist</strong>. A Gist can have one or more <span class="code">files</span>. This means you can have more than one code block within our content area. Optionally, you can specify a unique filename for each code block using the <span class="code">data-gistfilename</span> attribute. For example:</p>
+	<p>Each content item in Mura is considered a <strong>Gist</strong>. A Gist may contain one or more <span class="code">files</span>. This means you can have more than one code block within our content area. Optionally, you may also specify a unique filename for each code block using the <span class="code">data-gistfilename</span> attribute. For example:</p>
 
-<pre class="code">&lt;pre class=&quot;gist&quot; data-gistfilename=&quot;myFile.js&quot;&gt;
-	var x=1;
-	var y=2;
+<pre class="code">&lt;pre class=&quot;gist&quot; data-gistfilename=&quot;someFile.js&quot;&gt;
+function daysInMonth(iMonth, iYear) {
+    return 32 - new Date(iYear, iMonth, 32).getDate();
+}
 &lt;/pre&gt;</pre>
 
-	<p>The syntax highlighting will be determined by the file extension at the end of the filename. You can specify a default filename under the plugin's settings or at the site-level by going to **Site Config > Edit Site**, select the **Extended Attributes** tab, and enter a value in the **Default Gist Filename** field.</p>
+<pre class="code">&lt;pre class=&quot;gist&quot; data-gistfilename=&quot;anotherFile.cfm&quot;&gt;
+&lt;cfscript&gt;
+$ = IsDefined('session') &amp;&amp; StructKeyExists(session, 'siteid') ?
+	application.serviceFactory.getBean('$').init(session.siteid) :
+	application.serviceFactory.getBean('$').init('default');
+&lt;/cfscript&gt;
+&lt;/pre&gt;</pre>
 
-	<p>As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the `Source` button and add `gist` to the list of class names. For example:</p>
+	<p>Syntax highlighting will be determined by the file extension at the end of the filename. You can specify the default filename under the plugin's settings or at the site-level by going to <strong>Site Config > Edit Site</strong>, select the <strong>Extended Attributes</strong> tab, and enter a value in the <strong>Default Gist Filename</strong> field.</p>
+
+	<p>As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select <span class="code">Code</span> from the <strong>Styles</strong> select menu. Then, select the <strong>Source</strong> button and add <span class="code">gist</span> to the list of class names. For example:</p>
 
 <pre class="code">
 &lt;pre class=&quot;prettyprint linenums gist&quot;&gt;
-	var x=1;
+var x=1;
 &lt;/pre&gt;
 </pre>
 
-	<p>On the first, or primary Gist, you can also add a **Description** for the Gist by using the `data-gistdescription` attribute. For example:</p>
+	<p>On the first, or primary Gist, you may also add a <strong>Description</strong> for the Gist by using the <span class="code">data-gistdescription</span> attribute. For example:</p>
 
 <pre class="code">
 &lt;pre class=&quot;prettyprint linenums gist&quot; data-gistdescription=&quot;This is my description.&quot;&gt;
@@ -55,18 +64,18 @@ var x=1;
 &lt;/pre&gt;
 </pre>
 
-	<p>Once the content item has been plublished, a `data-gistid` attribute is automatically added (along with the other optional attributes). If you edit the content item and select `Source`, you would see something similar to the following:</p>
+	<p>Once the content item has been published, a <span class="code">data-gistid</span> attribute is automatically added (<em>along with the other optional attributes</em>). If you edit the content item and select <strong>Source</strong>, you should see something similar to the following:</p>
 
 <pre class="code">
 &lt;pre class=&quot;prettyprint linenums gist&quot; 
 	data-gistdescription=&quot;This is my description&quot; 
 	data-gistfilename=&quot;file.cfm&quot; 
 	data-gistid=&quot;6503760&quot;&gt;
-	var x=1;
+var x=1;
 &lt;/pre&gt;
 </pre>
 
-	<p>If you simply wish to display an existing Gist in your code, then use one of the **Plugin Display Objects** options below.</p>
+	<p>If you simply wish to display an existing Gist in your code, then use one of the <strong>Plugin Display Objects</strong> options below.</p>
 
 	<h3>Plugin Display Objects</h3>
 	<p>There is one display object available:</p>
@@ -141,7 +150,7 @@ var x=1;
 	<ul>
 		<li>Mura CMS Core Version <strong>6.1+</strong></li>
 		<li>Adobe ColdFusion <strong>10.0.9</strong></li>
-		<li>Railo <strong>4.0.4</strong></li>
+		<li>Railo <strong>4.1.1</strong></li>
 	</ul>
 
 	<h2>Need help?</h2>
