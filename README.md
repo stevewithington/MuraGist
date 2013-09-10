@@ -37,7 +37,7 @@ Each content item in Mura is considered a **Gist**. A Gist can have one or more 
 
 The syntax highlighting will be determined by the file extension at the end of the filename. You can specify a default filename under the plugin's settings or at the site-level by going to **Site Config > Edit Site**, select the **Extended Attributes** tab, and enter a value in the **Default Gist Filename** field.
 
-On Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the `Source` button and add `gist` to the list of class names. For example:
+As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the `Source` button and add `gist` to the list of class names. For example:
 
 ```
 <pre class="prettyprint linenums gist">
