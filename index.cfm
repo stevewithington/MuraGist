@@ -24,7 +24,7 @@
 	<h2>Instructions</h2>
 
 	<h3>Usage</h3>
-	<p>From the 'Content' area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with <span class="code">&lt;pre&gt;</span> tags with a class of <span class="code">gist</span>. The <span class="code">class</span> attribute may contain multiple class names, if desired. For example:</p>
+	<p>From the **Content** area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with <span class="code">&lt;pre&gt;</span> tags with a class of <span class="code">gist</span>. The <span class="code">class</span> attribute may contain multiple class names, if desired. For example:</p>
 
 <pre class="code">&lt;pre class=&quot;gist someOtherClass&quot;&gt;
 var x=1;
@@ -59,7 +59,7 @@ var x=1;
 	<p>On the first, or primary Gist, you may also add a <strong>Description</strong> for the Gist by using the <span class="code">data-gistdescription</span> attribute. For example:</p>
 
 <pre class="code">
-&lt;pre class=&quot;prettyprint linenums gist&quot; data-gistdescription=&quot;This is my description.&quot;&gt;
+&lt;pre class=&quot;gist&quot; data-gistdescription=&quot;This is my description.&quot;&gt;
 var x=1;
 &lt;/pre&gt;
 </pre>
@@ -67,7 +67,7 @@ var x=1;
 	<p>Once the content item has been published, a <span class="code">data-gistid</span> attribute is automatically added (<em>along with the other optional attributes</em>). If you edit the content item and select <strong>Source</strong>, you should see something similar to the following:</p>
 
 <pre class="code">
-&lt;pre class=&quot;prettyprint linenums gist&quot; 
+&lt;pre class=&quot;gist&quot; 
 	data-gistdescription=&quot;This is my description&quot; 
 	data-gistfilename=&quot;file.cfm&quot; 
 	data-gistid=&quot;6503760&quot;&gt;

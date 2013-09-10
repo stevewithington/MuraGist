@@ -5,16 +5,16 @@ This is a [Mura CMS](http://getmura.com) plugin that enables users to create, ma
 ##Instructions
 
 ###Installation
-1. Log in to Github, go to Account Settings, select **Applications** and create a **Personal Access Token** and copy the access token
-2. Download a .zip of this project from https://github.com/stevewithington/MuraGist/archive/master.zip
-3. Log in to Mura CMS as a Super Admin
+1. Log in to [Github](https://github.com/login), go to Account Settings, select **Applications** and create a **Personal Access Token** and copy the access token
+2. [Download a .zip of this project](https://github.com/stevewithington/MuraGist/archive/master.zip) from https://github.com/stevewithington/MuraGist/archive/master.zip
+3. Log in to Mura CMS as a **Super Admin**
 4. Go to **Settings > Plugins**
 5. Click **Choose File** and select the .zip file you downloaded from Github
 6. Click **Deploy**
 7. **Accept** the License Agreement
 8. Enter your **Github Account Username**
-9. Paste the Personal Access Token you created in step 1 into the **Github Personal Access Token** field
-10. Select which site(s) you wish to enable the plugin for
+9. Paste the Personal Access Token you created in Step 1. into the **Github Personal Access Token** field
+10. Select the site(s) you wish to enable the plugin for
 11. Click **Update**
 
 ###Usage
@@ -57,7 +57,7 @@ var x=1;
 On the first, or primary Gist, you may also add a **Description** for the Gist by using the `data-gistdescription` attribute. For example:
 
 ```
-<pre class="prettyprint linenums gist" data-gistdescription="This is my description.">
+<pre class="gist" data-gistdescription="This is my description.">
 var x=1;
 </pre>
 ```
@@ -65,7 +65,7 @@ var x=1;
 Once the content item has been published, a `data-gistid` attribute is automatically added (*along with the other optional attributes*). If you edit the content item and select **Source**, you should see something similar to the following:
 
 ```
-<pre class="prettyprint linenums gist" 
+<pre class="gist" 
 	data-gistdescription="This is my description" 
 	data-gistfilename="file.cfm" 
 	data-gistid="6503760">
