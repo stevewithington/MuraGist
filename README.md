@@ -26,6 +26,17 @@ From the 'Content' area of any content item in Mura CMS, you can easily create/m
 </pre>
 ```
 
+Each content item in Mura is considered a **Gist**. A Gist can have one or more `files`. This means you can have more than one code block within our content area. Optionally, you can specify a unique filename for each code block using the `data-gistfilename` attribute. For example:
+
+```
+<pre class="gist" data-gistfilename="myFile.js">
+	var x=1;
+	var y=2;
+</pre>
+```
+
+
+
 ###Plugin Display Objects
 There is one display object available:
 
