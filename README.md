@@ -18,10 +18,10 @@ This is a [Mura CMS](http://getmura.com) plugin that enables users to create, ma
 11. Click 'Update'
 
 ###Usage
-From the 'Content' area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with `<pre>` tags with a class of `gist`. For example:
+From the 'Content' area of any content item in Mura CMS, you can easily create/manage a Gist by wrapping your text with `<pre>` tags with a class of `gist`. The `class` attribute may contain multiple class names, if desired. For example:
 
 ```
-<pre class="gist">
+<pre class="gist someOtherClass">
 	var x=1;
 </pre>
 ```
@@ -35,7 +35,32 @@ Each content item in Mura is considered a **Gist**. A Gist can have one or more 
 </pre>
 ```
 
+The syntax highlighting will be determined by the file extension at the end of the filename. You can specify a default filename under the plugin's settings or at the site-level by going to **Site Config > Edit Site**, select the **Extended Attributes** tab, and enter a value in the **Default Gist Filename** field.
 
+On Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the `Source` button and add `gist` to the list of class names. For example:
+
+```
+<pre class="prettyprint linenums gist">
+	var x=1;
+</pre>
+```
+
+On the first, or primary Gist, you can also add a **Description** for the Gist by using the `data-gistdescription` attribute. For example:
+
+```
+<pre class="prettyprint linenums gist" data-gistdescription="This is my description.">
+var x=1;
+</pre>
+```
+
+Once the content item has been plublished, a `data-gistid` attribute is automatically added (along with the other optional attributes). If you edit the content item and select `Source`, you would see something similar to the following:
+
+```
+<pre class="prettyprint linenums gist" data-gistdescription="This is my description" data-gistfilename="file.cfm" data-gistid="6503760">
+var x=1;</pre>
+```
+
+If you simply wish to display an existing Gist in your code, then use one of the **Plugin Display Objects** options below.
 
 ###Plugin Display Objects
 There is one display object available:
