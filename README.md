@@ -58,9 +58,9 @@ Once the content item has been plublished, a `data-gistid` attribute is automati
 ```
 <pre class="prettyprint linenums gist" 
 	data-gistdescription="This is my description" 
-	data-gistfilename="file.cfm" 
-	data-gistid="6503760">
-var x=1;</pre>
+	data-gistfilename="file.cfm" data-gistid="6503760">
+	var x=1;
+</pre>
 ```
 
 If you simply wish to display an existing Gist in your code, then use one of the **Plugin Display Objects** options below.
