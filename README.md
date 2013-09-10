@@ -22,16 +22,25 @@ From the **Content** area of any content item in Mura CMS, you can easily create
 
 ```
 <pre class="gist someOtherClass">
-	var x=1;
+var x=1;
 </pre>
 ```
 
-Each content item in Mura is considered a **Gist**. A Gist can have one or more `files`. This means you can have more than one code block within our content area. Optionally, you can specify a unique filename for each code block using the `data-gistfilename` attribute. For example:
+Each content item in Mura is considered a **Gist**. A Gist may have one or more `files`. This means you can have more than one code block within the content area. Optionally, you may also specify a unique filename for each code block using the `data-gistfilename` attribute. For example:
 
 ```
-<pre class="gist" data-gistfilename="myFile.js">
-	var x=1;
-	var y=2;
+<pre class="gist" data-gistfilename="someFile.js">
+function daysInMonth(iMonth, iYear) {
+    return 32 - new Date(iYear, iMonth, 32).getDate();
+}
+</pre>
+
+<pre class="gist" data-gistfilename="anotherFile.cfm">
+<cfscript>
+$ = IsDefined('session') && StructKeyExists(session, 'siteid') ?
+	application.serviceFactory.getBean('$').init(session.siteid) :
+	application.serviceFactory.getBean('$').init('default');
+</cfscript>
 </pre>
 ```
 
@@ -41,7 +50,7 @@ As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-
 
 ```
 <pre class="prettyprint linenums gist">
-	var x=1;
+var x=1;
 </pre>
 ```
 
