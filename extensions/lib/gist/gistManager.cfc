@@ -53,10 +53,11 @@ component output="false" accessors="true" {
 		return result;
 	}
 
-	public any function getGistScript(required string id, string file='', boolean cached=false, boolean debug=false) {
+	public any function getGistScript(required string id, string file='', boolean cached=true, boolean debug=false) {
 		var gistURL = 'https://gist.github.com/' & arguments.id & '.js';
 		var cacheID = '';
 		var response = '';
+		var str = '';
 
 		if ( Len(arguments.file) ) { 
 			gistURL &= '?file=' & arguments.file; 
@@ -79,11 +80,12 @@ component output="false" accessors="true" {
 		switch(isValidResponse(response)) {
 			case true :
 				CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
-				return '<script src="#gistURL#"></script>';
+				str = '<script src="#gistURL#"></script>';
 				break;
 			default :
-				return '';
+				break;
 		}
+		return str;
 	}
 
 	public boolean function isValidResponse(required any response) {
