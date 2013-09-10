@@ -36,11 +36,11 @@ function daysInMonth(iMonth, iYear) {
 </pre>
 
 <pre class="gist" data-gistfilename="anotherFile.cfm">
-<cfscript>
+&lt;cfscript&gt;
 $ = IsDefined('session') && StructKeyExists(session, 'siteid') ?
 	application.serviceFactory.getBean('$').init(session.siteid) :
 	application.serviceFactory.getBean('$').init('default');
-</cfscript>
+&lt;/cfscript&gt;
 </pre>
 ```
 
