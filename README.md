@@ -46,7 +46,7 @@ $ = IsDefined('session') && StructKeyExists(session, 'siteid') ?
 
 The syntax highlighting will be determined by the file extension at the end of the filename. You can specify the default filename under the plugin's settings or at the site-level under **Site Config > Edit Site**, select the **Extended Attributes** tab, and enter a value in the **Default Gist Filename** field.
 
-As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) can be used as a fallback for when a Gist either doesn't exist, or the service is unavailable. To do this, you simply highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the **Source** button from the editor toolbar and add `gist` to the list of class names. For example:
+As of Mura version 6.1, [google-code-prettify](https://code.google.com/p/google-code-prettify/) may be used as a fallback for syntax highlighting when a Gist either doesn't exist, or the service is unavailable. To use this feature, highlight a portion of text and select `Code` from the **Styles** select menu. Then, select the **Source** button from the editor toolbar and add `gist` to the list of class names. For example:
 
 ```
 <pre class="prettyprint linenums gist">
