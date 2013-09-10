@@ -13,7 +13,7 @@
 	#bodyWrap p.intro {font-size:1.25em;}
 	#bodyWrap h3{padding-top:1em;}
 	#bodyWrap ul{padding:0 0.75em 1em;margin:0 0.75em;}
-	.code {font-family: monospace;}
+	.code {font-family: Courier New, monospace;}
 </style>
 <cfsavecontent variable="body"><cfoutput>
 <div id="bodyWrap">
@@ -70,7 +70,7 @@
 				<td>Required</td>
 				<td class="code">&nbsp;</td>
 				<td>
-					<p>The ID of the Gist you wish to display.</p>
+					<p><span class="code">string</span> The ID of the Gist you wish to display.</p>
 				</td>
 			</tr>
 			<tr>
@@ -78,15 +78,15 @@
 				<td>Optional</td>
 				<td class="code">{empty string}</td>
 				<td>
-					<p>Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here.</p>
+					<p><span class="code">string</span> Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here.</p>
 				</td>
 			</tr>
 			<tr>
-				<td class="code">displayMessage</td> 
+				<td class="code">gistDisplayMessage</td> 
 				<td>Optional</td>
 				<td class="code">true</td>
 				<td>
-					<p>If a Gist either doesn't exist, do you want to display a message? If `false` then nothing will be displayed.</p>
+					<p><span class="code">boolean</span> If a Gist doesn't exist, do you want to display a message? If <span class="code">false</span> then nothing will be displayed.</p>
 				</td>
 			</tr>
 		</tbody>

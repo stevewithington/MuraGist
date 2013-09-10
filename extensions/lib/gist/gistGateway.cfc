@@ -20,7 +20,7 @@ component output="false" accessors="true" {
 	* @apiToken Log in to Github, go to Account Settings, select 'Applications' and create a 'Personal Access Token'
 	*/
 	public gistGateway function init(required string apiUsername, required string apiToken, string apiUrl='https://api.github.com') {
-		setApiUsername(arguments.apiUsername)
+		setApiUsername(arguments.apiUsername);
 		setApiToken(arguments.apiToken);
 		setApiUrl(arguments.apiUrl);
 		return this;
@@ -130,15 +130,6 @@ component output="false" accessors="true" {
 		}
 
 		return httpService.send().getPrefix();
-	}
-
-	// oauth
-	public any function oAuth() {
-		var params = {
-			client_id = 'b8a31c5cdf7d3f23dd74'
-			, redirect_uri = ''
-			, scope = 'gist'
-		}
 	}
 
 }

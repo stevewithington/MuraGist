@@ -34,9 +34,9 @@ The 'Plugin Display Objects' may also be added directly onto your template or ev
 
 | Attribute 		| Req/Opt 	| Default 			| Description 								|
 | ---				| ---		| ---				| ---										|
-| `gistID`			| Required 	| 					| The ID of the Gist you wish to display. 	|
-| `gistFilename`	| Optional 	| `{empty string}` 	| Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here. 	|
-| `displayMessage` 	| Optional 	| `true` 			| If a Gist either doesn't exist, do you want to display a message? If `false` then nothing will be displayed. |
+| `gistID`			| Required 	| 					| `string` The ID of the Gist you wish to display. 	|
+| `gistFilename`	| Optional 	| `{empty string}` 	| `string` Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here. 	|
+| `gistDisplayMessage` 	| Optional 	| `true` 			| `boolean` If a Gist either doesn't exist, do you want to display a message? If `false` then nothing will be displayed. |
 
 ##Tested With
 * Mura CMS Core Version 6.1+

@@ -60,7 +60,7 @@
 			<!--- Display Message? --->
 			<div class="control-group">
 				<label for="gistdisplaymessage" class="control-label">Display Message?</label>
-				<p>If a Gist either doesn't exist, do you want to display a message? If 'No,' then nothing will be displayed.</p>
+				<p>If a Gist doesn't exist, do you want to display a message? If 'No,' then nothing will be displayed.</p>
 				<div class="radio inline">
 					<input type="radio" name="gistdisplaymessage" id="displayYes" class="objectParam" value="1" <cfif YesNoFormat(params.gistdisplaymessage)>checked="checked"</cfif>>
 					<label for="displayYes">Yes</label>
