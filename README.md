@@ -4,6 +4,19 @@ This is a [Mura CMS](http://getmura.com) plugin that enables users to create, ma
 
 ##Instructions
 
+###Installation
+1. Log in to Github, go to Account Settings, select 'Applications' and create a 'Personal Access Token' and copy the access token
+2. Download a .zip of this project from https://github.com/stevewithington/MuraGist/archive/master.zip
+3. Log in to Mura CMS as a Super Admin
+4. Go to Settings > Plugins
+5. Click 'Choose File' and select the .zip file you downloaded from Github
+6. Click 'Deploy'
+7. Accept the License Agreement
+8. Enter your Github Account Username
+9. Paste the Personal Access Token you created in step 1 into the Github Personal Access Token field
+10. Select which site(s) you wish to enable the plugin for
+11. Click 'Update'
+
 ###Plugin Display Objects
 There is one display object available:
 
