@@ -159,7 +159,8 @@ var x=1;
 	<p>Cheers!<br />
 	<a href="http://stephenwithington.com">Steve Withington</a></p>
 </div>
-</cfoutput></cfsavecontent>
+</cfoutput>
+</cfsavecontent>
 <cfoutput>
 	#$.getBean('pluginManager').renderAdminTemplate(
 		body = body
