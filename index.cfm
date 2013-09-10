@@ -113,7 +113,8 @@ var x=1;
 		<thead>
 			<tr>
 				<th>Attribute</th>
-				<th>Req/Opt</th>
+				<th>Type</th>
+				<th>Required</th>
 				<th>Default</th>
 				<th>Description</th>
 			</tr>
@@ -121,26 +122,29 @@ var x=1;
 		<tbody>
 			<tr>
 				<td class="code">gistID</td>
-				<td>Required</td>
+				<td class="code">string</td>
+				<td>Yes</td>
 				<td class="code">&nbsp;</td>
 				<td>
-					<p><span class="code">string</span> The ID of the Gist you wish to display.</p>
+					<p>The ID of the Gist you wish to display.</p>
 				</td>
 			</tr>
 			<tr>
 				<td class="code">gistFilename</td>
-				<td>Optional</td>
+				<td class="code">string</td>
+				<td>No</td>
 				<td class="code">{empty string}</td>
 				<td>
-					<p><span class="code">string</span> Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here.</p>
+					<p>Gists can have more than one file associated with it. If you wish to display a specific file, specify the filename here.</p>
 				</td>
 			</tr>
 			<tr>
 				<td class="code">gistDisplayMessage</td> 
-				<td>Optional</td>
+				<td class="code">boolean</td>
+				<td>No</td>
 				<td class="code">true</td>
 				<td>
-					<p><span class="code">boolean</span> If a Gist doesn't exist, do you want to display a message? If <span class="code">false</span> then nothing will be displayed.</p>
+					<p>If a Gist doesn't exist, do you want to display a message? If <span class="code">false</span> then nothing will be displayed.</p>
 				</td>
 			</tr>
 		</tbody>
