@@ -110,6 +110,7 @@ component output="false" accessors="true" {
 				case 404 : // gist not found
 					break;
 				default : // unknown status code
+					break;
 			}
 		} catch(any e) {
 			// any other errors probably means user is not connected to Internet, or the response is an empty string
