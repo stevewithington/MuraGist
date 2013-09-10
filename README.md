@@ -56,7 +56,10 @@ var x=1;
 Once the content item has been plublished, a `data-gistid` attribute is automatically added (along with the other optional attributes). If you edit the content item and select `Source`, you would see something similar to the following:
 
 ```
-<pre class="prettyprint linenums gist" data-gistdescription="This is my description" data-gistfilename="file.cfm" data-gistid="6503760">
+<pre class="prettyprint linenums gist" 
+	data-gistdescription="This is my description" 
+	data-gistfilename="file.cfm" 
+	data-gistid="6503760">
 var x=1;</pre>
 ```
 
