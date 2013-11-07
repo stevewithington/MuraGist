@@ -24,7 +24,7 @@ component output="false" accessors="true" extends="mura.cfobject" {
 		return Len(gist) 
 			? gist 
 			: arguments.gistDisplayMessage
-				? '<p class="notice">Gist ###arguments.gistID# could not be found. Maybe it no longer exists, or the Gist service is currently unavailable.</p>'
+				? '<p class="alert alert-danger">Gist ###arguments.gistID# could not be found. Maybe it no longer exists, or the Gist service is currently unavailable.</p>'
 				: '';
 	}
 

@@ -58,12 +58,16 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 
 		for ( gist in gists ) {
 			originalGist = gist;
-			gist = ReplaceNoCase(gist,'&nbsp;',' ','ALL'); // XML does not support the &nbsp entity
+			gist = ReplaceNoCase(gist,'&nbsp;',' ','ALL'); // XML does not support the &nbsp; entity
 
 			try {
 				xml = XMLParse(gist);
 			} catch (any e) {
-				break; // bad gist
+				if ( arguments.$.event('debug') == 1 ) {
+					WriteDump(var=e, label='Gist XMLParse ERROR', abort=1);
+				} else {
+					continue; // bad gist
+				}
 			}
 
 			attrs = xml.XmlRoot.XmlAttributes;
@@ -109,7 +113,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 		var attrs = '';
 		var defaultGistFilename = Len(arguments.$.siteConfig('gistFilename')) ? arguments.$.siteConfig('gistFilename') : pluginConfig.getSetting('gistFilename');
 		var defaultGistPublic = 1;
-		var defaultGistDescription = '';
+		var gistDescription = newBean.getURL(complete=true);
 		var result = { id='', saved=false };
 		var gistBean = '';
 		var gistBeanArgs = {};
@@ -126,7 +130,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 			try {
 				xml = XMLParse(gist);
 			} catch (any e) {
-				break; // bad gist
+				continue; // bad gist
 			}
 
 			attrs = xml.XmlRoot.XmlAttributes;
@@ -148,7 +152,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 				gistBeanArgs = {
 					'id': StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID
 					, 'public' = StructKeyExists(attrs, 'data-gistpublic') ? attrs['data-gistpublic'] : defaultGistPublic
-					, 'description' = StructKeyExists(attrs, 'data-gistdescription') && Len(attrs['data-gistdescription']) ? attrs['data-gistdescription'] : defaultGistDescription
+					, 'description' = gistDescription
 					, 'files' = {
 						'#gistFilename#' = {
 							'content' = Len(Trim(gistContent)) ? gistContent : JavaCast('null', '')

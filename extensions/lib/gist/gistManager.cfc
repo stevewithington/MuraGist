@@ -73,7 +73,7 @@ component output="false" accessors="true" {
 						: CacheGet(cacheID);
 		} catch(any e) {
 			if (arguments.debug) { 
-				WriteDump(var=e, abort=1); 
+				WriteDump(var=e, label='MuraGist.extensions.lib.gist.gistManager:getGistScript() ERROR' abort=1); 
 			}
 		}
 
