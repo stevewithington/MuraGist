@@ -12,124 +12,111 @@
 */
 component output="false" accessors="true" {
 
-	property name='apiUsername';
-	property name='apiToken';
-	property name='apiUrl';
+	property name='gistGateway';
 
-	/**
-	* @apiToken Log in to Github, go to Account Settings, select 'Applications' and create a 'Personal Access Token'
-	*/
-	public gistGateway function init(required string apiUsername, required string apiToken, string apiUrl='https://api.github.com') {
-		setApiUsername(arguments.apiUsername);
-		setApiToken(arguments.apiToken);
-		setApiUrl(arguments.apiUrl);
+	public gistManager function init(required gistGateway) {
+		setGistGateway(arguments.gistGateway);
 		return this;
 	}
 
-	// --------------------------------------------------------------------------------------
-	//	GISTS
-
-	public any function getByID(required string id, boolean cached=true) {
-		var endpoint = getApiUrl() & '/gists/' & arguments.id;
-		var params = {
-			url = { 'access_token' = getApiToken() }
+	public any function save(required struct gistBean) {
+		var gistExists = false;
+		var result = {
+			saved = false
+			, initialResponse = {}
+			, response = {}
+			, id = ''
+			, gistBean = arguments.gistBean
 		};
-		var r = !arguments.cached
-				|| !ArrayFindNoCase(CacheGetAllIDs(), arguments.id) 
-				|| ( ArrayFindNoCase(CacheGetAllIDs(), arguments.id) && !IsJSON(CacheGet(arguments.id).Filecontent) )
-					? ping(endpoint=endpoint, method='GET', params=params)
-					: CacheGet(arguments.id);
-		if ( IsDefined('r.Filecontent') && IsJSON(r.Filecontent) ) {
-			CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
+
+		if ( Len(arguments.gistBean.getID()) ) {
+			result.initialResponse = getGistGateway().getByID(id=arguments.gistBean.getID(), cached=false);
+			gistExists = isValidResponse(result.initialResponse);
 		}
-		return r;
+
+		result.response = gistExists 
+			? getGistGateway().edit(argumentCollection=arguments.gistBean.getAllValues()) 
+			: getGistGateway().create(argumentCollection=arguments.gistBean.getAllValues());
+
+		result.parsedJSON = StructKeyExists(result.response, 'Filecontent') && IsJSON(result.response.Filecontent) 
+			? DeserializeJSON(result.response.Filecontent)
+			: {};
+
+		result.id = IsDefined('result.parsedJSON.id') 
+			? result.parsedJSON.id 
+			: '';
+
+		result.saved = Len(result.id) 
+			? true 
+			: false;
+
+		return result;
 	}
 
-	public any function create(required struct files, boolean public=true, string description='') {
-		var input = SerializeJSON({
-			'public' = arguments.public
-			, 'description' = arguments.description
-			, 'files' = arguments.files
-		});
-		var endpoint = getApiUrl() & '/gists';
-		var params = {
-			url = { 'access_token' = getApiToken() }
-			, body = { 'input' = input }
-		};
-		var r = ping(endpoint=endpoint, method='POST', params=params);
-		return r;
-	}
+	public any function getGistScript(required string id, string file='', boolean cached=true, boolean debug=false) {
+		var gistURL = 'https://gist.github.com/' & arguments.id & '.js';
+		var cacheID = '';
+		var response = '';
+		var str = '';
 
-	public any function edit(required string id, required struct files, string description='') {
-		var input = SerializeJSON({
-			'description' = arguments.description
-			, 'files' = arguments.files
-		});
-		var endpoint = getApiUrl() & '/gists/' & arguments.id; //arguments.gistBean.getID();
-		var params = {
-			url = { 'access_token' = getApiToken() }
-			, body = { 'input' = input }
-		};
-		var r = ping(endpoint=endpoint, method='POST', params=params); // method='PATCH' throws an error, so using 'POST' instead
-		CachePut(arguments.id, r, CreateTimeSpan(0,1,0,0));
-		return r;
-	}
+		if ( Len(arguments.file) ) { 
+			gistURL &= '?file=' & arguments.file; 
+		}
 
-	public any function delete(required string id) {
-		var endpoint = getApiUrl() & '/gists/' & arguments.id;
-		var params = {
-			url = { 'access_token' = getApiToken() }
-		};
-		CacheRemove(arguments.id);
-		return ping(endpoint=endpoint, method='DELETE', params=params);
-	}
+		cacheID = Hash(gistURL);
 
-	public any function list() {
-		var endpoint = getApiUrl() & '/users/' & getUsername() & '/gists';
-		var params = {
-			url = { 'access_token' = getApiToken() }
-		};
-		return ping(endpoint=endpoint, method='GET', params=params);
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	GITHUB STATUS
-
-	public boolean function isConnected() {
-		var isConnected = false;
-		var endpoint = 'https://status.github.com/api/status.json';
-		var response = ping(endpoint=endpoint, method='GET');
 		try {
-			var result = DeserializeJSON(response.filecontent);
-			if ( StructKeyExists(result, 'status') && result.status == 'good' ) {
-				isConnected = true;
-			}
-		} catch(any e) {}
-		return isConnected;
-	}
-
-	// --------------------------------------------------------------------------------------
-	//	HELPERS
-
-	public any function ping(required string endpoint, string method='GET', struct params={}) {
-		var response = {};
-		var paramtype = '';
-		var paramkey = '';
-		var httpService = new http();
-
-		httpService.setCharset('utf-8')
-			.setMethod(arguments.method)
-			.setURL(arguments.endpoint);
-
-		if ( !StructIsEmpty(arguments.params) ) {
-			for (paramtype in arguments.params) {
-				for (paramkey in arguments.params[paramtype]) {
-					httpService.addParam(type=paramtype,name=paramkey,value=arguments.params[paramtype][paramkey]);
-				}
+			response = !arguments.cached
+					|| !ArrayFindNoCase(CacheGetAllIDs(), cacheID) 
+					|| (ArrayFindNoCase(CacheGetAllIDs(), cacheID) && !IsJSON(CacheGet(cacheID).Filecontent) )
+						? getGistGateway().ping(endpoint=gistURL, method='GET')
+						: CacheGet(cacheID);
+		} catch(any e) {
+			if (arguments.debug) { 
+				WriteDump(var=e, label='MuraGist.extensions.lib.gist.gistManager:getGistScript() ERROR', abort=1); 
 			}
 		}
 
-		return httpService.send().getPrefix();
+		switch(isValidResponse(response)) {
+			case true :
+				CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
+				str = '<script src="#gistURL#"></script>';
+				break;
+			default :
+				break;
+		}
+		return str;
+	}
+
+	public boolean function isValidResponse(required any response) {
+		var resp = arguments.response;
+		var isValid = false;
+
+		try {
+			switch (resp.Responseheader.Status_Code) {
+				case 200 : // OK ... gist found, gist updated, list found, etc.
+					isValid = true;
+					break;
+				case 201 : // gist created, or gist forked
+					isValid = true;
+					break;
+				case 204 : // gist deleted, or gist starred, unstarred
+					isValid = true;
+					break;
+				case 401 : // bad credentials OR two-factor authentication required (not enabled for this plugin yet)
+					break;
+				case 403 : // potentially several different issues such as too many login attempts
+					break;
+				case 404 : // gist not found
+					break;
+				default : // unknown status code
+					break;
+			}
+		} catch(any e) {
+			// any other errors probably means user is not connected to Internet, or the response is an empty string
+		}
+
+		return isValid;
 	}
 
 }
