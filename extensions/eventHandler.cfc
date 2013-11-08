@@ -103,7 +103,8 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 		var debug = arguments.$.globalConfig('debuggingenabled') == true ? true : false;
 		var newBean = arguments.$.event('newBean');
 		var oldBean = arguments.$.event('contentBean');
-		var body = newBean.getBody();
+		// Fix copy and paste issues
+		var body = ReplaceNoCase(ReplaceNoCase(ReplaceNoCase(newBean.getBody(),'&ldquo;','&quot;','ALL'),'&rdquo;','&quot;','ALL'),'&rsquo;',"'",'ALL');
 		var gist = '';
 		var regex = '(?i)(<pre[^>]+>).+?(</pre>)';
 		var gists = reFindMatches(regex, body); // array of code blocks wrapped with <pre> tags
