@@ -151,7 +151,7 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 				gistContent = Len(Trim(xml.XmlRoot.XmlText)) ? Trim(xml.XmlRoot.XmlText) : '';
 
 				gistBeanArgs = {
-					'id': StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID
+					'id' = StructKeyExists(attrs, 'data-gistid') && Len(attrs['data-gistid']) ? attrs['data-gistid'] : gistID
 					, 'public' = StructKeyExists(attrs, 'data-gistpublic') ? attrs['data-gistpublic'] : defaultGistPublic
 					, 'description' = gistDescription
 					, 'files' = {
@@ -168,8 +168,8 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 					result = gistBean.save();
 				} catch(any e) {
 					StructAppend(errors, {
-						'e#StructCount(errors)+1#': 'An error occured while attempting to save a Gist. In other words, it is not possible to save your Gist(s) at this time.'
-						, 'e#StructCount(errors)+2#': 'Error Message: #e.message#'
+						'e#StructCount(errors)+1#' = 'An error occured while attempting to save a Gist. In other words, it is not possible to save your Gist(s) at this time.'
+						, 'e#StructCount(errors)+2#' = 'Error Message: #e.message#'
 					});
 				}
 

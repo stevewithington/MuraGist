@@ -12,7 +12,7 @@
 		pluginName = 'MuraGist'
 		, package = 'MuraGist'
 		, loadPriority = 5
-		, version = '0.1.1'
+		, version = '0.1.2'
 		, provider = 'Steve Withington'
 		, providerURL = 'http://stephenwithington.com'
 		, category = 'Application'
