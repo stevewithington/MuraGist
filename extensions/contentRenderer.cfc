@@ -2,7 +2,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Copyright 2015 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -21,6 +21,7 @@ component output="false" accessors="true" extends="mura.cfobject" {
 	public any function dspGist(string gistID='', string gistFilename='', boolean gistDisplayMessage=true) {
 		var muraGistManager = variables.$.muraGistManager;
 		var gist = muraGistManager.getGistScript(id=arguments.gistID, file=arguments.gistFilename);
+
 		return Len(gist) 
 			? gist 
 			: arguments.gistDisplayMessage

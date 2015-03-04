@@ -110,13 +110,13 @@ The 'Plugin Display Objects' may also be added directly onto your template or ev
 | `gistDisplayMessage` 	| `boolean` 	| No 		| `true` 			| If a Gist doesn't exist, do you want to display a message? If `false` then nothing will be displayed. |
 
 ##Tested With
-* Mura CMS Core Version 6.1+
-* Adobe ColdFusion 10.0.9
-* Railo 4.1.1
+* Mura CMS Core Version 6.2+
+* Adobe ColdFusion 11.0.3
+* Lucee 4.5.1.000
 
 
 ##License
-Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+Copyright 2013-2015 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 

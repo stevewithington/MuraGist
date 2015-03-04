@@ -2,7 +2,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Copyright 2015 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 * 
@@ -47,7 +47,7 @@ component output="false" accessors="true" {
 
 	public any function create(required struct files, boolean public=true, string description='') {
 		var input = SerializeJSON({
-			'public' = arguments.public
+			'public' = toBoolean(arguments.public)
 			, 'description' = arguments.description
 			, 'files' = arguments.files
 		});
@@ -56,8 +56,7 @@ component output="false" accessors="true" {
 			url = { 'access_token' = getApiToken() }
 			, body = { 'input' = input }
 		};
-		var r = ping(endpoint=endpoint, method='POST', params=params);
-		return r;
+		return ping(endpoint=endpoint, method='POST', params=params);
 	}
 
 	public any function edit(required string id, required struct files, string description='') {
@@ -85,11 +84,75 @@ component output="false" accessors="true" {
 	}
 
 	public any function list() {
-		var endpoint = getApiUrl() & '/users/' & getUsername() & '/gists';
+		var endpoint = getApiUrl() & '/users/' & getApiUsername() & '/gists';
 		var params = {
 			url = { 'access_token' = getApiToken() }
 		};
 		return ping(endpoint=endpoint, method='GET', params=params);
+	}
+
+	public any function star(required string id) {
+		var endpoint = '/gists/' & arguments.id & '/star';
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint=endpoint, method='PUT', params=params);
+	}
+
+	public any function unstar(required string id) {
+		var endpoint = '/gists/' & arguments.id & '/star';
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint=endpoint, method='DELETE', params=params);
+	}
+
+	public any function starcheck(required string id) {
+		var endpoint = '/gists/' & arguments.id & '/star';
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint=endpoint, method='GET', params=params);
+	}
+
+	public any function fork(required string id) {
+		var endpoint = '/gists/' & arguments.id & '/forks';
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint=endpoint, method='POST', params=params);
+	}
+
+	// --------------------------------------------------------------------------------------
+	//	GIST COMMENTS
+
+	public any function listComments(required string gistid) {
+		var endpoint = '/gists/' & arguments.gistid & '/comments';
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint=endpoint, method='GET', params=params);
+	}
+
+	public any function getCommentByID(required string gistid, required string id) {
+		var endpoint = '/gists/' & arguments.gistid & '/comments/' & arguments.id;
+		var cacheID = Hash(arguments.gistid & '-' & arguments.id);
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		var response = !ArrayFindNoCase(CacheGetAllIDs(), cacheID)
+				? ping(endpoint=endpoint, method='GET', params=params)
+				: CacheGet(cacheID);
+		CachePut(cacheID, response, CreateTimeSpan(0,1,0,0));
+		return response;
+	}
+
+	public any function deleteComment(required string gistid, required string id) {
+		var endpoint = '/gists/' & arguments.gistid & '/comments/' & arguments.id;
+		var params = {
+			url = { 'access_token' = getApiToken() }
+		};
+		return ping(endpoint, method='DELETE', params=params);
 	}
 
 	// --------------------------------------------------------------------------------------
@@ -130,6 +193,10 @@ component output="false" accessors="true" {
 		}
 
 		return httpService.send().getPrefix();
+	}
+
+	public boolean function toBoolean(any arg='') {
+		return IsBoolean(arg) && arg ? true : false;
 	}
 
 }

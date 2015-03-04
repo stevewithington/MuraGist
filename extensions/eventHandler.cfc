@@ -2,7 +2,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Copyright 2015 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -198,8 +198,14 @@ component output="false" accessors="true" extends="mura.plugin.pluginGenericEven
 
 	public any function getMuraGistManager($=get$()) {
 		var tp = arguments.$.initTracePoint('MuraGist.extensions.eventHandler.getMuraGistManager');
-		var username = Len(arguments.$.siteConfig('gistUsername')) ? arguments.$.siteConfig('gistUsername') : pluginConfig.getSetting('gistUsername');
-		var token = Len(arguments.$.siteConfig('gistToken')) ? arguments.$.siteConfig('gistToken') : pluginConfig.getSetting('gistToken');
+		var username = Len(arguments.$.siteConfig('gistUsername')) 
+			? arguments.$.siteConfig('gistUsername') 
+			: pluginConfig.getSetting('gistUsername');
+
+		var token = Len(arguments.$.siteConfig('gistToken')) 
+			? arguments.$.siteConfig('gistToken') 
+			: pluginConfig.getSetting('gistToken');
+
 		var muraGistGateway = new lib.gist.gistGateway(apiUsername=username, apiToken=token);
 		var muraGistManager = new lib.gist.gistManager(muraGistGateway);
 		arguments.$.commitTracePoint(tp);

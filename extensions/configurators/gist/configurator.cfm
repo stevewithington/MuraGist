@@ -3,7 +3,7 @@
 * 
 * This file is part of MuraGist
 *
-* Copyright 2013 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
+* Copyright 2015 Stephen J. Withington, Jr. <http://www.stephenwithington.com>
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -54,7 +54,7 @@
 						class="objectParam span12" 
 						value="#params.gistfilename#">
 				</div>
-				<p>Some Gists have more than one file associated with it. If you wish to display a specific file, enter the filename, or else all files associated with the Gist will be rendered.</p>
+				<p>Some Gists have more than one file associated with it. If you wish to display a specific file, enter the <em>exact</em> filename, or else all files associated with the Gist will be rendered.</p>
 			</div>
 
 			<!--- Display Message? --->
